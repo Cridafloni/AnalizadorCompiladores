@@ -5,12 +5,10 @@ import co.edu.uniquindio.compiladores.proyecto.lexico.AnalizadorLexico
 // Min 32 vid 2
     fun main(){
 
-    val lexico= AnalizadorLexico("@123 a $12~^asdasd12^ nelson simon ")
+    val lexico= AnalizadorLexico("@123 a $12~^asdasd12^ nelson simon @31")
         lexico.analizar()
         print(lexico.listaTokens)
     }
-
-
 /*
 //Variable
  var numero= 12
