@@ -5,7 +5,7 @@ import co.edu.uniquindio.compiladores.proyecto.lexico.AnalizadorLexico
 // Min 32 vid 2
     fun main(){
 
-    val lexico= AnalizadorLexico("@123 a $12~^asdasd12^ nelson simon @31")
+    val lexico= AnalizadorLexico("@123$12~ LOGI ^asdasd12^ REL ENT nelson simon @31 PAL")
         lexico.analizar()
         print(lexico.listaTokens)
     }

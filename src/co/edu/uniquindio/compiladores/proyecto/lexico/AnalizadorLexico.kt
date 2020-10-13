@@ -27,6 +27,13 @@ class AnalizadorLexico(var codigoFuente:String) {
                 obtenerSiguienteCaracter()
                 continue
             }
+            if(esTipoCadena())continue
+            if(esTipoEntero())continue
+            if(esTipoLogico())continue
+            if(esTipoReal())continue
+
+            if(esConstante())continue
+
             if(esEntero()) continue
             if(esDecimal())continue
             if(esCadena()) continue
@@ -211,6 +218,163 @@ class AnalizadorLexico(var codigoFuente:String) {
             return true
         }
 }
+        return false
+    }
+
+    fun esTipoCadena():Boolean{
+        if(caracterActual=='P'){
+
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if (caracterActual=='A'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }else{
+                return false
+            }
+            if (caracterActual=='L') {
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.RESERVADA,filaInicial,columnaInicial)
+                return true
+            }else{
+                return false
+            }
+        }
+        return false
+    }
+
+    fun esTipoEntero():Boolean{
+        if(caracterActual=='E'){
+
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if (caracterActual=='N'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }else{
+                return false
+            }
+            if (caracterActual=='T') {
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.RESERVADA,filaInicial,columnaInicial)
+                return true
+            }else{
+                return false
+            }
+        }
+        return false
+    }
+
+    fun esTipoReal():Boolean{
+        if(caracterActual=='R'){
+
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if (caracterActual=='E'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }else{
+                return false
+            }
+            if (caracterActual=='L') {
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.RESERVADA,filaInicial,columnaInicial)
+                return true
+            }else{
+                return false
+            }
+        }
+        return false
+    }
+
+    fun esTipoLogico():Boolean{
+        if(caracterActual=='L'){
+
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if (caracterActual=='O'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }else{
+                return false
+            }
+            if (caracterActual=='G'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }else{
+                return false
+            }
+            if (caracterActual=='I') {
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.RESERVADA,filaInicial,columnaInicial)
+                return true
+            }else{
+                return false
+            }
+        }
+        return false
+    }
+
+    fun esConstante():Boolean{
+        if(caracterActual=='C'){
+
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if (caracterActual=='O'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }else{
+                return false
+            }
+            if (caracterActual=='N'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }else{
+                return false
+            }
+            if (caracterActual=='S') {
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.RESERVADA,filaInicial,columnaInicial)
+                return true
+            }else{
+                return false
+            }
+        }
         return false
     }
 
