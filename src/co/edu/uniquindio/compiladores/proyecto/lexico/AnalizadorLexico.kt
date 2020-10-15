@@ -28,6 +28,9 @@ class AnalizadorLexico(var codigoFuente:String) {
                 obtenerSiguienteCaracter()
                 continue
             }
+
+            if(esClase()) continue
+
             if(esTipoCadena())continue
             if(esTipoEntero())continue
             if(esTipoLogico())continue
@@ -40,6 +43,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             if(esCadena()) continue
             if(esLogico()) continue
 
+            if (esIdentificador())continue
             print("Crida estuvo aca xd")
 
             almacenarToken(""+caracterActual, Categoria.DESCONOCIDO,filaActual,columnaActual)
@@ -381,7 +385,61 @@ class AnalizadorLexico(var codigoFuente:String) {
         
         return false
     }
+    
+    fun esIdentificador():Boolean{
 
+        if(caracterActual.isLowerCase() && caracterActual.isLetter()){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            while (caracterActual.isLowerCase()  && caracterActual.isLetter() ){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }
+            almacenarToken(lexema,Categoria.IDENTIFICADOR,filaInicial,columnaInicial)
+            return true
+        }
+        return false
+    }
+
+
+     fun esClase():Boolean{
+         if(caracterActual=='-'){
+             var lexema = ""
+             var filaInicial = filaActual
+             var columnaInicial = columnaActual
+             var posicionInicial = posicionActual
+
+             lexema += caracterActual
+             obtenerSiguienteCaracter()
+             if (caracterActual.isLetter()){
+                 lexema += caracterActual
+                 obtenerSiguienteCaracter()
+
+                 while (caracterActual.isLetter()){
+                     lexema += caracterActual
+                     obtenerSiguienteCaracter()
+                 }
+                 if (caracterActual=='-'){
+                     lexema += caracterActual
+                     obtenerSiguienteCaracter()
+
+                     almacenarToken(lexema,Categoria.IDENTIFICADOR,filaInicial,columnaInicial)
+                     return true
+                 }else{
+                     return false
+                 }
+             }else{
+                 return false
+             }
+         }
+         return false
+     }
     fun obtenerSiguienteCaracter(){
         if(posicionActual==codigoFuente.length-1){
             caracterActual= finCodigo
