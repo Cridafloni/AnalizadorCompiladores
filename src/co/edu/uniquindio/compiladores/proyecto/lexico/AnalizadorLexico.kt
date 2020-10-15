@@ -40,6 +40,8 @@ class AnalizadorLexico(var codigoFuente:String) {
             if(esCadena()) continue
             if(esLogico()) continue
 
+            print("Crida estuvo aca xd")
+
             almacenarToken(""+caracterActual, Categoria.DESCONOCIDO,filaActual,columnaActual)
             obtenerSiguienteCaracter()
         }
