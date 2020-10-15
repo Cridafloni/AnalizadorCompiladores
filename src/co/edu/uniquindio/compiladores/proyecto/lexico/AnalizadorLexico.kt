@@ -21,6 +21,7 @@ class AnalizadorLexico(var codigoFuente:String) {
     }
 
     fun analizar(){
+
         while (caracterActual != finCodigo){
 
             if (caracterActual == ' ' || caracterActual=='\t' || caracterActual=='\n'){
@@ -375,6 +376,7 @@ class AnalizadorLexico(var codigoFuente:String) {
                 return false
             }
         }
+        
         return false
     }
 
