@@ -7,6 +7,7 @@ import co.edu.uniquindio.compiladores.proyecto.lexico.AnalizadorLexico
 
     val lexico= AnalizadorLexico("@123$12~ LOGI ^asdasd12^ REL ENT nelson simon @31 PAL")
         lexico.analizar()
+    print("Hola :3")
         print(lexico.listaTokens)
     }
 /*
