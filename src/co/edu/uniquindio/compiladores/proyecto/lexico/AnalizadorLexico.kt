@@ -505,7 +505,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             var columnaInicial = columnaActual
             var posicionInicial = posicionActual
     
-    fun esIdentificador():Boolean{
+
 
             lexema += caracterActual
             obtenerSiguienteCaracter()
@@ -634,6 +634,7 @@ class AnalizadorLexico(var codigoFuente:String) {
 
         return false
     }
+    fun esIdentificador():Boolean{
         if(caracterActual.isLowerCase() && caracterActual.isLetter()){
             var lexema = ""
             var filaInicial = filaActual
