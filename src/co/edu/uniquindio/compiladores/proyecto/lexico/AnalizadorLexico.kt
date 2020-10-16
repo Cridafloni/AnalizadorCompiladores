@@ -119,7 +119,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             if (caracterActual=='~'){
                 lexema += caracterActual
                 obtenerSiguienteCaracter()
-                almacenarToken(lexema,Categoria.OPERADOR_RELACIONAL_IGUAL_IGUAL,filaInicial,columnaInicial)
+                almacenarToken(lexema,Categoria.OPERADOR_RELACIONAL,filaInicial,columnaInicial)
                 return true
             }
             return false
@@ -147,7 +147,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             if (caracterActual=='~'){
                 lexema += caracterActual
                 obtenerSiguienteCaracter()
-                almacenarToken(lexema,Categoria.OPERADOR_RELACIONAL_MENOR_IGUAL,filaInicial,columnaInicial)
+                almacenarToken(lexema,Categoria.OPERADOR_RELACIONAL,filaInicial,columnaInicial)
                 return true
             }
             return false
@@ -176,7 +176,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             if (caracterActual=='~'){
                 lexema += caracterActual
                 obtenerSiguienteCaracter()
-                almacenarToken(lexema,Categoria.OPERADOR_RELACIONAL_MAYOR_IGUAL,filaInicial,columnaInicial)
+                almacenarToken(lexema,Categoria.OPERADOR_RELACIONAL,filaInicial,columnaInicial)
                 return true
             }
             return false
@@ -314,24 +314,24 @@ class AnalizadorLexico(var codigoFuente:String) {
             when(caracterActual){
                 's' -> {
                     lexema += caracterActual
-                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_SALTO_LINEA,filaInicial,columnaInicial)
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE,filaInicial,columnaInicial)
 
                     return "\n"
                 }
                 '°' -> {
                     lexema += caracterActual
-                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_SIGNO_GRADO,filaInicial,columnaInicial)
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE,filaInicial,columnaInicial)
 
                     return "°"
                 }
                 '^' -> {
                     lexema += caracterActual
-                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_SIGNO_INTERCALACION,filaInicial,columnaInicial)
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE,filaInicial,columnaInicial)
                     return ""
                 }
                 't' -> {
                     lexema += caracterActual
-                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_TABULACION,filaInicial,columnaInicial)
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE,filaInicial,columnaInicial)
 
                     return "\t"
                 }
@@ -378,81 +378,33 @@ class AnalizadorLexico(var codigoFuente:String) {
     }
 
     fun esLogico():Boolean{
-
+        val verdadero = "simon"
+        val falso = "nelson"
+        var recorrido = ""
         var lexema = ""
         var filaInicial = filaActual
         var columnaInicial = columnaActual
         var posicionInicial = posicionActual
 
-        if (caracterActual==='s'){
+        if (caracterActual =='s')
+            recorrido = verdadero
+        else if(caracterActual == 'n')
+            recorrido = falso
 
-            lexema += caracterActual
-            obtenerSiguienteCaracter()
-            if(caracterActual=='i'){
+        for (i in recorrido){
+            if(i == caracterActual){
                 lexema += caracterActual
                 obtenerSiguienteCaracter()
-            }else{
-                return false
-            }
-            if(caracterActual=='m'){
-                lexema += caracterActual
-                obtenerSiguienteCaracter()
-            }else{
-                return false
-            }
-            if(caracterActual=='o'){
-                lexema += caracterActual
-                obtenerSiguienteCaracter()
-            }else{
-                return false
-            }
-            if(caracterActual=='n'){
-                lexema += caracterActual
-                obtenerSiguienteCaracter()
-                almacenarToken(lexema, Categoria.RESERVADA, filaInicial, columnaInicial)
-                return true
-            }else{
-                return false
-            }
-        }else{
-            if (caracterActual=='n'){
-
-                lexema += caracterActual
-                obtenerSiguienteCaracter()
-                if(caracterActual=='e'){
-                    lexema += caracterActual
-                    obtenerSiguienteCaracter()
-                }else{
-                    return false
-                }
-                if (caracterActual=='l'){
-                    lexema += caracterActual
-                    obtenerSiguienteCaracter()
-                }else{
-                    return false
-                }
-                if(caracterActual=='s'){
-                    lexema += caracterActual
-                    obtenerSiguienteCaracter()
-                }else{
-                    return false
-                }
-                if(caracterActual=='o'){
-                    lexema += caracterActual
-                    obtenerSiguienteCaracter()
-                }else{
-                    return false
-                }
-                if(caracterActual=='n'){
-                    lexema += caracterActual
-                    obtenerSiguienteCaracter()
-                    almacenarToken(lexema, Categoria.RESERVADA, filaInicial, columnaInicial)
-                    return true
-                }else{
-                    return false
-                }
+            }else {
+                continue
             }
         }
+        if(recorrido.equals(lexema)){
+            obtenerSiguienteCaracter()
+            almacenarToken(lexema, Categoria.OPERADOR_LOGICO, filaInicial, columnaInicial)
+                return true
+            }
+        hacerBT(posicionInicial, filaInicial, columnaInicial)
         return false
     }
 
