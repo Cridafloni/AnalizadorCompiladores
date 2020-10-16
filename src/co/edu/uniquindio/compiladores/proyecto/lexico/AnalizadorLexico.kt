@@ -94,7 +94,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             if (caracterActual=='"'){
                 lexema += caracterActual
                 obtenerSiguienteCaracter()
-                almacenarToken(lexema,Categoria.BLOQUE_SENTENCIA,filaInicial,columnaInicial)
+                almacenarToken(lexema,Categoria.BLOQUE_AGRUPACION,filaInicial,columnaInicial)
                 return true
             }
             hacerBT(posicionInicial,filaInicial,columnaInicial)
@@ -102,6 +102,51 @@ class AnalizadorLexico(var codigoFuente:String) {
         }
         return false
     }
+
+    fun esCaracterEscape():String{
+        if (caracterActual == '°'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            when(caracterActual){
+                's' -> {
+                    lexema += caracterActual
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_SALTO_LINEA,filaInicial,columnaInicial)
+
+                    return "\n"
+                }
+                '°' -> {
+                    lexema += caracterActual
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_SIGNO_GRADO,filaInicial,columnaInicial)
+
+                    return "°"
+                }
+                '^' -> {
+                    lexema += caracterActual
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_SIGNO_INTERCALACION,filaInicial,columnaInicial)
+                    return ""
+                }
+                't' -> {
+                    lexema += caracterActual
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_TABULACION,filaInicial,columnaInicial)
+
+                    return "\t"
+                }
+                else -> {
+                    hacerBT(posicionInicial, filaInicial, columnaInicial)
+
+                    return ""
+                }
+            }
+        }
+        return ""
+    }
+
     fun esCadena():Boolean{
         if (caracterActual=='^'){
             var lexema = ""
@@ -112,9 +157,15 @@ class AnalizadorLexico(var codigoFuente:String) {
             lexema += caracterActual
             obtenerSiguienteCaracter()
 
-            while (caracterActual != '^' && caracterActual != '°' && caracterActual != finCodigo){
-                lexema += caracterActual
-                obtenerSiguienteCaracter()
+            while (caracterActual != '^' && caracterActual != finCodigo){
+                var caracterEscape = esCaracterEscape()
+                if (caracterEscape.isNotEmpty()){
+                    lexema += caracterEscape
+                }
+                else {
+                    lexema += caracterActual
+                }
+                    obtenerSiguienteCaracter()
             }
             if (caracterActual=='^'){
                 lexema += caracterActual
