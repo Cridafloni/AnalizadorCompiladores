@@ -28,38 +28,136 @@ class AnalizadorLexico(var codigoFuente:String) {
                 obtenerSiguienteCaracter()
                 continue
             }
-
+            //Palabras reservadas
             if(esClase()) continue
-
             if(esTipoCadena())continue
             if(esTipoEntero())continue
             if(esTipoLogico())continue
             if(esTipoReal())continue
-
+            //Tipos de datos
             if(esConstante())continue
-
             if(esEntero()) continue
             if(esDecimal())continue
             if(esCadena()) continue
             if(esLogico()) continue
+            //Bloques de sentencia
             if(esBloqueSentencia()) continue
             if(esAgrupacion()) continue
             if (esIdentificador())continue
-
+            //Operadores lógicos
             if(esConectorY()) continue
             if(esConectorO()) continue
             if(esNegacion()) continue
-
+            //Comentarios
+            if (esComentarioBloque()) continue
+            if (esComentarioLinea()) continue
+            //Operadores matemáticos y asignación
             if (esOperadorMatematico()) continue
             if (esCiclo()) continue
             if (esOperadorInicial()) continue
-            if (esComentarioBloque()) continue
-            if (esComentarioLinea()) continue
             if (esOperadorAsignacion()) continue
+            //Operadores relacionales
+            if (esMayorIgual()) continue
+            if (esMenorIgual()) continue
+            if (esIgualIgual()) continue
 
             almacenarToken(""+caracterActual, Categoria.DESCONOCIDO,filaActual,columnaActual)
             obtenerSiguienteCaracter()
         }
+    }
+
+    fun esIgualIgual():Boolean{
+        if (caracterActual == ':'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if(caracterActual != '~'){
+                hacerBT(posicionInicial, filaInicial, columnaInicial)
+                return false
+            }
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if(caracterActual != ':'){
+                hacerBT(posicionInicial, filaInicial, columnaInicial)
+                return false
+            }
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if (caracterActual=='~'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.OPERADOR_RELACIONAL_IGUAL_IGUAL,filaInicial,columnaInicial)
+                return true
+            }
+            return false
+        }
+        return false
+    }
+
+    fun esMenorIgual():Boolean{
+        if (caracterActual == '<'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if(caracterActual != ':'){
+                return false
+            }
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if (caracterActual=='~'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.OPERADOR_RELACIONAL_MENOR_IGUAL,filaInicial,columnaInicial)
+                return true
+            }
+            return false
+        }
+        return false
+    }
+
+    fun esMayorIgual():Boolean{
+        if (caracterActual == '>'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if(caracterActual != ':'){
+                hacerBT(posicionInicial, filaInicial, columnaInicial)
+                return false
+            }
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if (caracterActual=='~'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.OPERADOR_RELACIONAL_MAYOR_IGUAL,filaInicial,columnaInicial)
+                return true
+            }
+            return false
+        }
+        return false
     }
 
     fun esBloqueSentencia():Boolean{
@@ -71,6 +169,11 @@ class AnalizadorLexico(var codigoFuente:String) {
 
             lexema += caracterActual
             obtenerSiguienteCaracter()
+
+            if(caracterActual == ':'){
+                hacerBT(posicionInicial, filaInicial, columnaInicial)
+                return false
+            }
 
             while (caracterActual != '<' && caracterActual != finCodigo){
                 lexema += caracterActual
@@ -635,14 +738,19 @@ class AnalizadorLexico(var codigoFuente:String) {
 
             lexema += caracterActual
             obtenerSiguienteCaracter()
+
             if(caracterActual == '~')
             {
                 lexema += caracterActual
                 obtenerSiguienteCaracter()
+
+                if(caracterActual == ':'){
+                    hacerBT(posicionInicial, filaInicial, columnaInicial)
+                    return false
+                }
                 almacenarToken(lexema,Categoria.OPERADOR_ASIGNACION,filaInicial,columnaInicial)
                 return true
-            } else{
-                return false
+
             }
         }
         return false
