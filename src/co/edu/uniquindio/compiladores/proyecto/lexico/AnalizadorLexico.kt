@@ -42,15 +42,66 @@ class AnalizadorLexico(var codigoFuente:String) {
             if(esDecimal())continue
             if(esCadena()) continue
             if(esLogico()) continue
-
+            if(esBloqueSentencia()) continue
+            if(esAgrupacion()) continue
             if (esIdentificador())continue
-            print("Crida estuvo aca xd")
 
             almacenarToken(""+caracterActual, Categoria.DESCONOCIDO,filaActual,columnaActual)
             obtenerSiguienteCaracter()
         }
     }
 
+    fun esBloqueSentencia():Boolean{
+        if (caracterActual == '>'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            while (caracterActual != '<' && caracterActual != finCodigo){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }
+            if (caracterActual=='<'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.BLOQUE_SENTENCIA,filaInicial,columnaInicial)
+                return true
+            }
+            hacerBT(posicionInicial,filaInicial,columnaInicial)
+            return false
+        }
+        return false
+    }
+
+    fun esAgrupacion():Boolean{
+        if (caracterActual == '"'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            while (caracterActual != '"' && caracterActual != finCodigo){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }
+            if (caracterActual=='"'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.BLOQUE_SENTENCIA,filaInicial,columnaInicial)
+                return true
+            }
+            hacerBT(posicionInicial,filaInicial,columnaInicial)
+            return false
+        }
+        return false
+    }
     fun esCadena():Boolean{
         if (caracterActual=='^'){
             var lexema = ""
@@ -61,7 +112,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             lexema += caracterActual
             obtenerSiguienteCaracter()
 
-            while (caracterActual.isLetterOrDigit()||caracterActual == ' ' || caracterActual=='\t' || caracterActual=='\n'){
+            while (caracterActual != '^' && caracterActual != '°' && caracterActual != finCodigo){
                 lexema += caracterActual
                 obtenerSiguienteCaracter()
             }
@@ -71,6 +122,7 @@ class AnalizadorLexico(var codigoFuente:String) {
                 almacenarToken(lexema,Categoria.CADENA_CARACTER,filaInicial,columnaInicial)
                 return true
             }
+            hacerBT(posicionInicial,filaInicial,columnaInicial)
             return false
         }
         return false
