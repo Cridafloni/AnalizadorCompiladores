@@ -1,5 +1,7 @@
 package co.edu.uniquindio.compiladores.proyecto.lexico
 
+import javax.net.ssl.HandshakeCompletedEvent
+
 class AnalizadorLexico(var codigoFuente:String) {
 
     var posicionActual=0
@@ -378,17 +380,17 @@ class AnalizadorLexico(var codigoFuente:String) {
     }
 
     fun esLogico():Boolean{
-        val verdadero = "simon"
-        val falso = "nelson"
+        val verdadero = "SIMON"
+        val falso = "NELSON"
         var recorrido = ""
         var lexema = ""
         var filaInicial = filaActual
         var columnaInicial = columnaActual
         var posicionInicial = posicionActual
 
-        if (caracterActual =='s')
+        if (caracterActual =='S')
             recorrido = verdadero
-        else if(caracterActual == 'n')
+        else if(caracterActual == 'N')
             recorrido = falso
 
         for (i in recorrido){
@@ -396,15 +398,16 @@ class AnalizadorLexico(var codigoFuente:String) {
                 lexema += caracterActual
                 obtenerSiguienteCaracter()
             }else {
-                continue
+                hacerBT(posicionInicial, filaInicial, columnaInicial)
+                return false
             }
         }
-        if(recorrido.equals(lexema)){
+        if(recorrido.equals(lexema) && lexema.isNotEmpty()){
             obtenerSiguienteCaracter()
             almacenarToken(lexema, Categoria.OPERADOR_LOGICO, filaInicial, columnaInicial)
-                return true
+
+            return true
             }
-        hacerBT(posicionInicial, filaInicial, columnaInicial)
         return false
     }
 
