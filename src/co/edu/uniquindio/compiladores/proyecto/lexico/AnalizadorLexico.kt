@@ -28,6 +28,9 @@ class AnalizadorLexico(var codigoFuente:String) {
                 obtenerSiguienteCaracter()
                 continue
             }
+
+            if(esClase()) continue
+
             if(esTipoCadena())continue
             if(esTipoEntero())continue
             if(esTipoLogico())continue
@@ -39,6 +42,9 @@ class AnalizadorLexico(var codigoFuente:String) {
             if(esDecimal())continue
             if(esCadena()) continue
             if(esLogico()) continue
+            if(esBloqueSentencia()) continue
+            if(esAgrupacion()) continue
+            if (esIdentificador())continue
 
             if(esConectorY()) continue
             if(esConectorO()) continue
@@ -54,6 +60,102 @@ class AnalizadorLexico(var codigoFuente:String) {
         }
     }
 
+    fun esBloqueSentencia():Boolean{
+        if (caracterActual == '>'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            while (caracterActual != '<' && caracterActual != finCodigo){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }
+            if (caracterActual=='<'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.BLOQUE_SENTENCIA,filaInicial,columnaInicial)
+                return true
+            }
+            hacerBT(posicionInicial,filaInicial,columnaInicial)
+            return false
+        }
+        return false
+    }
+
+    fun esAgrupacion():Boolean{
+        if (caracterActual == '"'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            while (caracterActual != '"' && caracterActual != finCodigo){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }
+            if (caracterActual=='"'){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+                almacenarToken(lexema,Categoria.BLOQUE_AGRUPACION,filaInicial,columnaInicial)
+                return true
+            }
+            hacerBT(posicionInicial,filaInicial,columnaInicial)
+            return false
+        }
+        return false
+    }
+
+    fun esCaracterEscape():String{
+        if (caracterActual == '°'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            when(caracterActual){
+                's' -> {
+                    lexema += caracterActual
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_SALTO_LINEA,filaInicial,columnaInicial)
+
+                    return "\n"
+                }
+                '°' -> {
+                    lexema += caracterActual
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_SIGNO_GRADO,filaInicial,columnaInicial)
+
+                    return "°"
+                }
+                '^' -> {
+                    lexema += caracterActual
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_SIGNO_INTERCALACION,filaInicial,columnaInicial)
+                    return ""
+                }
+                't' -> {
+                    lexema += caracterActual
+                    almacenarToken(lexema,Categoria.CARACTER_ESCAPE_TABULACION,filaInicial,columnaInicial)
+
+                    return "\t"
+                }
+                else -> {
+                    hacerBT(posicionInicial, filaInicial, columnaInicial)
+
+                    return ""
+                }
+            }
+        }
+        return ""
+    }
+
     fun esCadena():Boolean{
         if (caracterActual=='^'){
             var lexema = ""
@@ -64,9 +166,15 @@ class AnalizadorLexico(var codigoFuente:String) {
             lexema += caracterActual
             obtenerSiguienteCaracter()
 
-            while (caracterActual.isLetterOrDigit()||caracterActual == ' ' || caracterActual=='\t' || caracterActual=='\n'){
-                lexema += caracterActual
-                obtenerSiguienteCaracter()
+            while (caracterActual != '^' && caracterActual != finCodigo){
+                var caracterEscape = esCaracterEscape()
+                if (caracterEscape.isNotEmpty()){
+                    lexema += caracterEscape
+                }
+                else {
+                    lexema += caracterActual
+                }
+                    obtenerSiguienteCaracter()
             }
             if (caracterActual=='^'){
                 lexema += caracterActual
@@ -74,6 +182,7 @@ class AnalizadorLexico(var codigoFuente:String) {
                 almacenarToken(lexema,Categoria.CADENA_CARACTER,filaInicial,columnaInicial)
                 return true
             }
+            hacerBT(posicionInicial,filaInicial,columnaInicial)
             return false
         }
         return false
@@ -395,6 +504,8 @@ class AnalizadorLexico(var codigoFuente:String) {
             var filaInicial = filaActual
             var columnaInicial = columnaActual
             var posicionInicial = posicionActual
+    
+    fun esIdentificador():Boolean{
 
             lexema += caracterActual
             obtenerSiguienteCaracter()
@@ -523,6 +634,58 @@ class AnalizadorLexico(var codigoFuente:String) {
 
         return false
     }
+        if(caracterActual.isLowerCase() && caracterActual.isLetter()){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            while (caracterActual.isLowerCase()  && caracterActual.isLetter() ){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }
+            almacenarToken(lexema,Categoria.IDENTIFICADOR,filaInicial,columnaInicial)
+            return true
+        }
+        return false
+    }
+
+
+     fun esClase():Boolean{
+         if(caracterActual=='-'){
+             var lexema = ""
+             var filaInicial = filaActual
+             var columnaInicial = columnaActual
+             var posicionInicial = posicionActual
+
+             lexema += caracterActual
+             obtenerSiguienteCaracter()
+             if (caracterActual.isLetter()){
+                 lexema += caracterActual
+                 obtenerSiguienteCaracter()
+
+                 while (caracterActual.isLetter()){
+                     lexema += caracterActual
+                     obtenerSiguienteCaracter()
+                 }
+                 if (caracterActual=='-'){
+                     lexema += caracterActual
+                     obtenerSiguienteCaracter()
+
+                     almacenarToken(lexema,Categoria.IDENTIFICADOR,filaInicial,columnaInicial)
+                     return true
+                 }else{
+                     return false
+                 }
+             }else{
+                 return false
+             }
+         }
+         return false
+     }
     fun obtenerSiguienteCaracter(){
         if(posicionActual==codigoFuente.length-1){
             caracterActual= finCodigo
