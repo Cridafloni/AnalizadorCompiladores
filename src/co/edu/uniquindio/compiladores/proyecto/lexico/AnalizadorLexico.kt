@@ -34,6 +34,8 @@ class AnalizadorLexico(var codigoFuente:String) {
             if(esTipoEntero())continue
             if(esTipoLogico())continue
             if(esTipoReal())continue
+            if(esCiclo()) continue
+            if(esCondicional()) continue
             //Tipos de datos
             if(esConstante())continue
             if(esEntero()) continue
@@ -53,7 +55,6 @@ class AnalizadorLexico(var codigoFuente:String) {
             if (esComentarioLinea()) continue
             //Operadores matemáticos y asignación
             if (esOperadorMatematico()) continue
-            if (esCiclo()) continue
             if (esOperadorInicial()) continue
             if (esOperadorAsignacion()) continue
             //Operadores relacionales
@@ -65,6 +66,29 @@ class AnalizadorLexico(var codigoFuente:String) {
             obtenerSiguienteCaracter()
         }
     }
+
+    fun esCondicional():Boolean{
+        if (caracterActual == 'V'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if(caracterActual != 'I'){
+                return false
+            }
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+            almacenarToken(lexema,Categoria.RESERVADA,filaInicial,columnaInicial)
+
+            return true
+        }
+        return false
+    }
+
 
     fun esIgualIgual():Boolean{
         if (caracterActual == ':'){
