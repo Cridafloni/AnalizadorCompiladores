@@ -53,6 +53,8 @@ class AnalizadorLexico(var codigoFuente:String) {
             if (esOperadorMatematico()) continue
             if (esCiclo()) continue
             if (esOperadorInicial()) continue
+            if (esComentarioBloque()) continue
+            if (esComentarioLinea()) continue
             if (esOperadorAsignacion()) continue
 
             almacenarToken(""+caracterActual, Categoria.DESCONOCIDO,filaActual,columnaActual)
@@ -82,6 +84,66 @@ class AnalizadorLexico(var codigoFuente:String) {
             }
             hacerBT(posicionInicial,filaInicial,columnaInicial)
             return false
+        }
+        return false
+    }
+
+    fun esComentarioBloque():Boolean{
+        if (caracterActual == '*'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if(caracterActual != '-'){
+                hacerBT(posicionInicial, filaInicial, columnaInicial)
+                return false
+            }
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            while (caracterActual != finCodigo){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+
+                if(lexema.endsWith("-*")){
+                    obtenerSiguienteCaracter()
+                    almacenarToken(lexema,Categoria.COMENTARIO_BLOQUE,filaInicial,columnaInicial)
+
+                    return true
+                }
+            }
+            return false
+        }
+        return false
+    }
+
+    fun esComentarioLinea():Boolean{
+        if (caracterActual == '*'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if(caracterActual == '-'){
+                hacerBT(posicionInicial, filaInicial, columnaInicial)
+                return false
+            }
+
+            while (caracterActual != '\n' && caracterActual != finCodigo){
+                lexema += caracterActual
+                obtenerSiguienteCaracter()
+            }
+            obtenerSiguienteCaracter()
+            almacenarToken(lexema,Categoria.COMENTARIO_LINEA,filaInicial,columnaInicial)
+            return true
         }
         return false
     }
