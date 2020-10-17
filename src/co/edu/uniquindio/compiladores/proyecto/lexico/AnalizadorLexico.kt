@@ -64,8 +64,10 @@ class AnalizadorLexico(var codigoFuente:String) {
             if (esMenorIgual()) continue
             if (esIgualIgual()) continue
 
-            almacenarToken(""+caracterActual, Categoria.DESCONOCIDO,filaActual,columnaActual)
-            obtenerSiguienteCaracter()
+            if(caracterActual!=finCodigo){
+               almacenarToken(""+caracterActual, Categoria.DESCONOCIDO,filaActual,columnaActual)
+               obtenerSiguienteCaracter()
+           }
         }
     }
 
@@ -110,7 +112,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             obtenerSiguienteCaracter()
 
             if(caracterActual != ':'){
-                hacerBT(posicionInicial, filaInicial, columnaInicial)
+                almacenarToken(lexema,Categoria.OPERADOR_ASIGNACION,filaInicial,columnaInicial)
                 return false
             }
             posicionInicial = posicionActual
@@ -515,7 +517,7 @@ class AnalizadorLexico(var codigoFuente:String) {
     }
 
     fun esTipoEntero():Boolean{
-        val entero = "ENTERO"
+        val entero = "ENT"
         var lexema = ""
         var filaInicial = filaActual
         var columnaInicial = columnaActual
@@ -541,7 +543,7 @@ class AnalizadorLexico(var codigoFuente:String) {
     }
 
     fun esTipoReal():Boolean{
-        val real = "REAL"
+        val real = "REL"
         var lexema = ""
         var filaInicial = filaActual
         var columnaInicial = columnaActual
