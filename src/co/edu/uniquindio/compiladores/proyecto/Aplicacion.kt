@@ -1,13 +1,17 @@
 package co.edu.uniquindio.compiladores.proyecto
 
 import co.edu.uniquindio.compiladores.proyecto.lexico.AnalizadorLexico
+import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
 
 // Min 32 vid 2
     fun main(){
 
     val lexico= AnalizadorLexico("@123$12~ -aLd-aWHEN LOGI ^asdasd12^ REL ENT nelson simon @31 PAL ")
         lexico.analizar()
-        print(lexico.listaTokens)
+       // print(lexico.listaTokens)
+
+    val sintaxis= AnalizadorSintactico(lexico.listaTokens)
+    print(sintaxis.esUnidadDeCompilacion())
     }
 /*
 //Variable
