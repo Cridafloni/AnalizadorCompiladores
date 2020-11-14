@@ -46,7 +46,9 @@ class AnalizadorLexico(var codigoFuente:String) {
             if(esLogico()) continue
             //Bloques de sentencia
             if(esBloqueSentencia()) continue
-            if(esAgrupacion()) continue
+                //if(esAgrupacion()) continue
+            if(esAgrupacionAbierta()) continue
+            if(esAgrupacionCierre()) continue
             if (esIdentificador())continue
             //Operadores lógicos
             if(esConectorY()) continue
@@ -295,7 +297,7 @@ class AnalizadorLexico(var codigoFuente:String) {
         return false
     }
 
-    fun esAgrupacion():Boolean{
+   /* fun esAgrupacion():Boolean{
         if (caracterActual == '"'){
             var lexema = ""
             var filaInicial = filaActual
@@ -318,8 +320,35 @@ class AnalizadorLexico(var codigoFuente:String) {
             return false
         }
         return false
-    }
+    }*/
+    fun esAgrupacionAbierta():Boolean{
+        if(caracterActual == '"'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
 
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+            almacenarToken(lexema,Categoria.APERTURA_BLOQUE_AGRUPACION,filaInicial,columnaInicial)
+            return true
+        }
+        return false
+    }
+    fun esAgrupacionCierre():Boolean{
+        if(caracterActual == '"'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+            almacenarToken(lexema,Categoria.CIERRE_BLOQUE_AGRUPACION,filaInicial,columnaInicial)
+            return true
+        }
+        return false
+    }
     fun esCaracterEscape():String{
         if (caracterActual == '°'){
             var lexema = ""
@@ -380,7 +409,7 @@ class AnalizadorLexico(var codigoFuente:String) {
                    // lexema += caracterEscape
                 }
                 else {
-                    //  lexema += caracterActual
+                     lexema += caracterActual
                 }
                     obtenerSiguienteCaracter()
             }
