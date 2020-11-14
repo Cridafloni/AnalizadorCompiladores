@@ -738,7 +738,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             }
         }
 
-        if(ciclo.equals(lexema)){
+        if(recorrido.equals(lexema)&& lexema.isNotEmpty()){
             almacenarToken(lexema, Categoria.RESERVADA, filaInicial, columnaInicial)
 
             return true
