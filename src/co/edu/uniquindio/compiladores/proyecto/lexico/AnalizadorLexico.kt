@@ -45,10 +45,12 @@ class AnalizadorLexico(var codigoFuente:String) {
             if(esCadena()) continue //=================
             if(esLogico()) continue
             //Bloques de sentencia
-            if(esBloqueSentencia()) continue
+                //if(esBloqueSentencia()) continue
                 //if(esAgrupacion()) continue
             if(esAgrupacionAbierta()) continue
             if(esAgrupacionCierre()) continue
+            if(esSentenciaAbierta())continue
+            if(esSentenciaCierre())continue
             if (esIdentificador())continue
             //Operadores lógicos
             if(esConectorY()) continue
@@ -205,6 +207,9 @@ class AnalizadorLexico(var codigoFuente:String) {
         return false
     }
 
+    /**
+     *
+
     fun esBloqueSentencia():Boolean{
         if (caracterActual == '<'){
             var lexema = ""
@@ -231,6 +236,45 @@ class AnalizadorLexico(var codigoFuente:String) {
             }
             hacerBT(posicionInicial,filaInicial,columnaInicial)
             return false
+        }
+        return false
+    }
+     */
+
+    fun esSentenciaAbierta():Boolean{
+        if (caracterActual == '<'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+            if(caracterActual==':'){
+                hacerBT(posicionInicial,filaInicial,columnaInicial)
+                return false
+            }
+            almacenarToken(lexema,Categoria.APERTURA_BLOQUE_SENTENCIA,filaInicial,columnaInicial)
+            return true
+        }
+        return false
+    }
+
+    fun esSentenciaCierre():Boolean{
+        if (caracterActual == '>'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+            if(caracterActual==':'){
+                hacerBT(posicionInicial,filaInicial,columnaInicial)
+                return false
+            }
+            almacenarToken(lexema,Categoria.CIERRE_BLOQUE_SENTENCIA,filaInicial,columnaInicial)
+            return true
         }
         return false
     }
@@ -335,6 +379,7 @@ class AnalizadorLexico(var codigoFuente:String) {
         }
         return false
     }
+
     fun esAgrupacionCierre():Boolean{
         if(caracterActual == '"'){
             var lexema = ""
@@ -349,6 +394,7 @@ class AnalizadorLexico(var codigoFuente:String) {
         }
         return false
     }
+
     fun esCaracterEscape():String{
         if (caracterActual == '°'){
             var lexema = ""
@@ -823,10 +869,6 @@ class AnalizadorLexico(var codigoFuente:String) {
 
            lexema += caracterActual
            obtenerSiguienteCaracter()
-           if (caracterActual.isLowerCase()) {
-
-               lexema += caracterActual
-               obtenerSiguienteCaracter()
 
                if(caracterActual=='M'){
                    lexema += caracterActual
@@ -842,9 +884,7 @@ class AnalizadorLexico(var codigoFuente:String) {
                    almacenarToken(lexema, Categoria.RESERVADA, filaInicial, columnaInicial)
                    return true
                }
-           }else{
-               return false
-           }
+
        }
        return false
 

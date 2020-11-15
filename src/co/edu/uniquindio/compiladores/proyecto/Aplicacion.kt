@@ -6,12 +6,14 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
 // Min 32 vid 2
     fun main(){
 
-    val lexico= AnalizadorLexico("@123$12~ -aLd-aWHEN LOGI ^asdasd12^ REL ENT nelson simon @31 PAL ")
+    val lexico= AnalizadorLexico("|M| asdas PAL \"REL aca \" < >")
         lexico.analizar()
-       // print(lexico.listaTokens)
+        //print(lexico.listaTokens)
 
     val sintaxis= AnalizadorSintactico(lexico.listaTokens)
     print(sintaxis.esUnidadDeCompilacion())
+    print("\n")
+    print(sintaxis.listaErrores)
     }
 /*
 //Variable

@@ -24,8 +24,10 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      */
     fun esUnidadDeCompilacion (): UnidadDeCompilacion?{
         val listaFunciones: ArrayList<Funcion> = esListaFunciones()
-        return if(listaFunciones.size>0){
-            UnidadDeCompilacion(listaFunciones)
+        //print(listaFunciones)
+        val listaVariableGlobal: ArrayList<VariableGlobal> = esListaVariableGlobal()
+        return if(listaFunciones.size>=0){
+            UnidadDeCompilacion(listaFunciones, listaVariableGlobal)
         }else null
 
     }
@@ -49,56 +51,79 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         return listaFunciones
     }
 
+
     /**
-     * <Funcion> ::= def <TipoRetorno> identificador "(" [<ListaParametros>]")"<BloqueSentencias>
+     * <Funcion> ::= metodo identificador <TipoDato>  comillasAbriendo [<ListaParametros>]
+     *              comillasCerrando <BloqueSentencias>
      */
     fun esFuncion():Funcion?{
-
-        if (tokenActual.categoria == Categoria.RESERVADA && tokenActual.lexema=="def"){
+        if (tokenActual.categoria == Categoria.RESERVADA && tokenActual.lexema=="|M|"){
             obtenerSiguienteToken()
 
-            var tipoRetorno = esTipoRetorno()
-
-            if(tipoRetorno!= null){
-
+            if(tokenActual.categoria== Categoria.IDENTIFICADOR){
+                var nombreFuncion= tokenActual
                 obtenerSiguienteToken()
 
-                if(tokenActual.categoria== Categoria.IDENTIFICADOR){
-                    var nombreFuncion= tokenActual
+                var tipoRetorno = esTipoRetorno()
+
+                if(tipoRetorno!= null){
                     obtenerSiguienteToken()
 
-                    var listaParametros= esListaParametros()
+                    if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION)
+                    {
+                        obtenerSiguienteToken()
+                        var listaParametros= esListaParametros()
+                        if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION)
+                        {
+                            obtenerSiguienteToken()
 
-                    var bloqueDeSentencia = esBloqueSentencias()
+                            var bloqueDeSentencia = esBloqueSentencias()
 
-                    if(bloqueDeSentencia!=null){
-                        //Funcion bien escrita
-                        return Funcion(nombreFuncion,tipoRetorno, listaParametros,bloqueDeSentencia )
+                            if(bloqueDeSentencia!=null){
+                                obtenerSiguienteToken()
+                                //Funcion bien escrita
+                                return Funcion(nombreFuncion,tipoRetorno, listaParametros,bloqueDeSentencia )
+                            }else{
+                                reportarError("El bloque de sentencias esta vacio")
+                            }
+                        }
+                        else{
+                            reportarError("Falta cerrar la lista de Parametros")
+                        }
                     }else{
-                        reportarError("El bloque de sentencias esta vacio")
+                        reportarError("Falta abrir la lista de Parametros")
                     }
                 }else{
-                    reportarError("Falta nombre función")
-                }
-            }else{
                     reportarError("Falta el tipo de retorno de la funcion")
+                }
+            }else {
+                reportarError("No es un identificador valido")
             }
+        }else{
+            if(tokenActual.categoria !=  Categoria.CIERRE_BLOQUE_SENTENCIA){
+                reportarError("No  posee el parametro para el metodo")
+            }
+
         }
         return null
     }
 
     /**
-     * <TipoRetorno> ::= int | decimal | etc...
+     * <TipoRetorno> ::= int | decimal | etc... (FALTA void )
      */
     fun esTipoRetorno(): Token?{
         if (tokenActual.categoria == Categoria.RESERVADA){
-            if (tokenActual.lexema=="REL"||tokenActual.lexema=="ENT"||tokenActual.lexema=="PAL"){
+            if (tokenActual.lexema=="REL"||tokenActual.lexema=="ENT"||tokenActual.lexema=="PAL"||
+                    tokenActual.lexema=="LOGI"){
                 return tokenActual
             }
         }
         return null
     }
 
+    /**
+     * <ListaParametros>::=  <parámetro> [ operadorSeparador <ListaParametros>  ]
+     */
     fun esListaParametros():ArrayList<Parametro>{
         var listaParametros= ArrayList<Parametro>()
         var parametro = esParametro()
@@ -106,61 +131,87 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         while (parametro!=null){
             listaParametros.add(parametro)
 
-            if(tokenActual.lexema==","){
+            if(tokenActual.lexema==";"&& tokenActual.categoria==Categoria.SEPARADOR){
                 obtenerSiguienteToken()
                 parametro=esParametro()
             }else{
-                reportarError("Falta una coma en la lista de parametros")
+                if(tokenActual.categoria!=Categoria.APERTURA_BLOQUE_AGRUPACION)
+                {
+                    reportarError("Falta un punto y coma en la lista de parametros")
+
+                }
                 break
             }
-
         }
         return listaParametros
     }
 
     /**
-     *
+     *<BloqueSentencias> ::=abrirBloque [<ListaSentencia>] cerrarBloque
      */
-    fun esBloqueSentencias():ArrayList<Sentencia>{
+    fun esBloqueSentencias():ArrayList<Sentencia>?{
+        if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_SENTENCIA){
+            obtenerSiguienteToken()
 
-        var listaSentencias= esListaSentencias()
-        return listaSentencias
+            var listaSentencias= esListaSentencias()
+            if (tokenActual.categoria==Categoria.CIERRE_BLOQUE_SENTENCIA){
+                obtenerSiguienteToken()
+                return  listaSentencias
+            }else{
+                reportarError("Falta cerrar el bloque de sentencia >")
+            }
+
+        }else{
+            reportarError("Falta abrir el bloque de sentencia <")
+        }
+        return null
     }
 
+    /**
+     *
+     */
     fun esListaSentencias():ArrayList<Sentencia>{
+        var listaSentencia= ArrayList<Sentencia>()
+        var sentencia=
+
         return ArrayList()
     }
 
+    /**
+     * <parámetro>::= <TipoDato> identificador
+     */
     fun esParametro(): Parametro?{
-
-        if(tokenActual.categoria==Categoria.IDENTIFICADOR){
-            val nombre= tokenActual
+        val tipoDato= esTipoDato()
+        if(tipoDato!=null){
             obtenerSiguienteToken()
-
-            if (tokenActual.lexema==":"){
+            if (tokenActual.categoria==Categoria.IDENTIFICADOR){
+                val nombre= tokenActual
                 obtenerSiguienteToken()
-
-                val tipoDato= esTipoDato()
-
-                if(tipoDato!=null){
-                    obtenerSiguienteToken()
-
-                    return Parametro(nombre,tipoDato)
-                }
+                return Parametro(nombre,tipoDato)
             }
         }
         return null
     }
 
     /**
-     * <TipoRetorno> ::= int | decimal | etc...
+     * <TipoDato> ::= int | decimal | etc...
      */
     fun esTipoDato(): Token?{
         if (tokenActual.categoria == Categoria.RESERVADA){
-            if (tokenActual.lexema=="REL"||tokenActual.lexema=="ENT"||tokenActual.lexema=="PAL"){
+            if (tokenActual.lexema=="REL"||tokenActual.lexema=="ENT"||tokenActual.lexema=="PAL"||
+                    tokenActual.lexema=="LOGI"){
                 return tokenActual
             }
         }
         return null
     }
+
+
+    /**
+     * <variableGlobal>::= VariableGlobal <DeclararVariable>
+     */
+    fun esListaVariableGlobal(): ArrayList<VariableGlobal>{
+        return ArrayList()
+    }
+
 }

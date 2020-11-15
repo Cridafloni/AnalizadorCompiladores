@@ -2,10 +2,8 @@ package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
 import javafx.scene.control.TreeItem
 
-class UnidadDeCompilacion (var listaFunciones: ArrayList<Funcion>) {
-    override fun toString(): String {
-        return "UnidadDeCompilacion(listaFuncion=$listaFunciones)"
-    }
+class UnidadDeCompilacion (var listaFunciones: ArrayList<Funcion>, var listaVariablesGlobales: ArrayList<VariableGlobal>) {
+
 
     fun getArbolVisual():TreeItem<String>{
 
@@ -17,5 +15,9 @@ class UnidadDeCompilacion (var listaFunciones: ArrayList<Funcion>) {
         }
 
             return raiz
+    }
+
+    override fun toString(): String {
+        return "UnidadDeCompilacion(listaFunciones=$listaFunciones, listaVariablesGlobales=$listaVariablesGlobales)"
     }
 }
