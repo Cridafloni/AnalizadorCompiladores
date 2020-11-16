@@ -19,6 +19,11 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
 
     }
 
+    fun hacerBT(movido:Int){
+        posicionActual=posicionActual-movido
+        tokenActual=listaTokens[posicionActual]
+    }
+
     /**
      * <UnidadDeCompilacion>::= <ListaFunciones>
      */
@@ -168,18 +173,173 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     }
 
     /**
-     *
+     * <ListaSentencia>::= <sentencia> [<ListaSentencia>]
      */
     fun esListaSentencias():ArrayList<Sentencia>{
         var listaSentencia= ArrayList<Sentencia>()
-        var sentencia=
+        var sentencia= esSentencia()
 
-        return ArrayList()
+        while(sentencia!=null){
+            listaSentencia.add(sentencia)
+        }
+        return listaSentencia
     }
 
     /**
+     * <sentencia>::= <BloqueDecision> | <DeclaracionVariables> | <Asignacion> | <Impresion> |
+                        <BloqueCiclos> | <Lectura> | <InvocacionFuncion>| [<Retorno>]
+     */
+    fun esSentencia(): Sentencia?{
+
+        if(tokenActual.categoria==Categoria.RESERVADA){
+            if(tokenActual.lexema=="VI"){
+                obtenerSiguienteToken()
+                var sentencia = esBloqueDecision()
+
+            }//else if(verificarDeclaracionVariables(tokenActual)){ }
+            else if (tokenActual.lexema=="WHEN"||tokenActual.lexema=="DO"){
+
+            }
+        }
+        return null
+    }
+
+    /**
+     * <BloqueDesicion>::= condicional comillasAbriendo <ExpresiónLógica>
+     *     comillasCerrando <BloqueSentencia>[<BloqueSentencia>]
+     */
+    fun esBloqueDecision(): Sentencia? {
+        if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+           obtenerSiguienteToken()
+
+            var expresionLogica= esExpresionLogica()
+            if(expresionLogica!=null){
+                obtenerSiguienteToken()
+                if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+                    var bloqueSentencia= esBloqueSentencias()
+                    if(bloqueSentencia!= null){
+                        obtenerSiguienteToken()
+                        var bloqueSentencia1= esBloqueSentencias()
+                        obtenerSiguienteToken()
+                        return Sentencia()
+                    }
+                }
+            }else{
+
+            }
+        }
+        return null
+
+    }
+
+    /**
+     * <ExpresiónLógica>::= <ExpresióRelacional> [Operadorlogicos <ExpresiónLógica>]
+     */
+    fun esExpresionLogica(): ExpresionLogica?{
+        var relacional = esExpresionRelacional()
+        if (relacional!=null){
+            obtenerSiguienteToken()
+            if(tokenActual.categoria==Categoria.OPERADOR_LOGICO){
+                var operadorLogico= tokenActual
+                obtenerSiguienteToken()
+                var expresion = esExpresionLogica()
+                return ExpresionLogica(relacional,expresion,operadorLogico)
+            }else{
+                return ExpresionLogica(relacional,null,null)
+            }
+        }else{
+            reportarError("Expresion relacional no valida")
+        }
+        return null
+    }
+
+    /**
+     * <ExpresiónRelacional>::= <componente> operadorRelacional <componente>
+     */
+    fun esExpresionRelacional(): ExpresionRelacional? {
+        var componente1= esComponente()
+        if(componente1!=null){
+            obtenerSiguienteToken()
+            if(tokenActual.categoria==Categoria.OPERADOR_RELACIONAL){
+                obtenerSiguienteToken()
+                var componente2= esComponente()
+                if(componente2!=null){
+                    obtenerSiguienteToken()
+
+                    return ExpresionRelacional()
+                }else{
+                    reportarError("Componente 2 no valido")
+                }
+            }else{
+                reportarError("Se necesita operador relacional valido")
+            }
+        }else{
+            reportarError("Componente 1 no valido")
+        }
+        return null
+    }
+
+    fun esComponente():Any?{
+        var esdato= esDato()
+        var invocacion= esInvocacionFuncion()
+        var variable = tokenActual
+        if(tokenActual.categoria==Categoria.IDENTIFICADOR){
+            if(invocacion!=null){
+                obtenerSiguienteToken()
+                return invocacion
+            }else{
+                obtenerSiguienteToken()
+                return variable
+            }
+        }else if(esdato!=null){
+            obtenerSiguienteToken()
+            return esdato
+        }
+        return null
+    }
+
+    /**
+     * <InvocacionFuncion>::= identificador comillasAbriendo [<ListaParametros>]
+     *                          comillasCerrando operadorFinal
+     */
+    fun esInvocacionFuncion(): FuncionInvocada ?{
+        if(tokenActual.categoria==Categoria.IDENTIFICADOR){
+            var nombre= tokenActual;
+            obtenerSiguienteToken()
+            if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+                obtenerSiguienteToken()
+                var listaParametros = esListaParametros()
+                if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+                    obtenerSiguienteToken()
+                    if (tokenActual.categoria==Categoria.OPERADOR_FINAL){
+                        return FuncionInvocada(nombre,listaParametros)
+                    }else{
+                        reportarError("Falta operador final")
+                    }
+                }else{
+                    reportarError("Falta cerrar el bloque")
+                }
+            }else{
+                reportarError("Falta cerrar el bloque")
+            }
+        }
+        return null
+    }
+    /**fun verificarDeclaracionVariables(tokenActual: Token): Boolean {
+        if(tokenActual.lexema=="CONS"){
+            obtenerSiguienteToken()
+            if (){
+
+            }
+        }
+
+        return false
+    }
+*/
+    /**
      * <parámetro>::= <TipoDato> identificador
      */
+
     fun esParametro(): Parametro?{
         val tipoDato= esTipoDato()
         if(tipoDato!=null){
@@ -206,6 +366,18 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         return null
     }
 
+    /**
+     *
+    <Dato> ::=  numeroEntero | numeroReal | <ListaCadena>|  logicos | <Arreglo> |
+                <ExpresiónAritmética>|<Matriz>
+     */
+    fun esDato():Token?{
+        if(tokenActual.categoria==Categoria.ENTERO||tokenActual.categoria==Categoria.CADENA_CARACTER
+                ||tokenActual.categoria==Categoria.DECIMAL||tokenActual.categoria==Categoria.OPERADOR_LOGICO){
+            return tokenActual
+        }
+        return null
+    }
 
     /**
      * <variableGlobal>::= VariableGlobal <DeclararVariable>
