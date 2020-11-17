@@ -152,7 +152,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     }
 
     /**
-     *<BloqueSentencias> ::=abrirBloque [<ListaSentencia>] cerrarBloque
+     *<BloqueSentencias> ::= abrirBloque [<ListaSentencia>] cerrarBloque
      */
     fun esBloqueSentencias():ArrayList<Sentencia>?{
         if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_SENTENCIA){
@@ -175,13 +175,15 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     /**
      * <ListaSentencia>::= <sentencia> [<ListaSentencia>]
      */
-    fun esListaSentencias():ArrayList<Sentencia>{
+    fun esListaSentencias():ArrayList<Sentencia>?{
         var listaSentencia= ArrayList<Sentencia>()
         var sentencia= esSentencia()
 
         while(sentencia!=null){
             listaSentencia.add(sentencia)
         }
+        if(listaSentencia.isEmpty())
+            return null
         return listaSentencia
     }
 
@@ -195,12 +197,18 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             if(tokenActual.lexema=="VI"){
                 obtenerSiguienteToken()
                 var sentencia = esBloqueDecision()
-
+                if(sentencia!=null){
+                    obtenerSiguienteToken()
+                    return Sentencia(sentencia)
+                }else{
+                    reportarError("Sentencia inválida")
+                }
             }//else if(verificarDeclaracionVariables(tokenActual)){ }
             else if (tokenActual.lexema=="WHEN"||tokenActual.lexema=="DO"){
 
             }
         }
+        obtenerSiguienteToken()
         return null
     }
 
@@ -208,24 +216,25 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * <BloqueDesicion>::= condicional comillasAbriendo <ExpresiónLógica>
      *     comillasCerrando <BloqueSentencia>[<BloqueSentencia>]
      */
-    fun esBloqueDecision(): Sentencia? {
+    fun esBloqueDecision(): BloqueDesicion? {
         if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
            obtenerSiguienteToken()
 
             var expresionLogica= esExpresionLogica()
             if(expresionLogica!=null){
-                obtenerSiguienteToken()
-                if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+                if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_SENTENCIA){
                     var bloqueSentencia= esBloqueSentencias()
                     if(bloqueSentencia!= null){
                         obtenerSiguienteToken()
                         var bloqueSentencia1= esBloqueSentencias()
                         obtenerSiguienteToken()
-                        return Sentencia()
+                        return BloqueDesicion(expresionLogica, bloqueSentencia, bloqueSentencia1)
+                    }else{
+                        reportarError("El bloque de sentencias está vacío")
                     }
                 }
             }else{
-
+                reportarError("Expresión lógica inválida")
             }
         }
         return null
@@ -238,13 +247,13 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     fun esExpresionLogica(): ExpresionLogica?{
         var relacional = esExpresionRelacional()
         if (relacional!=null){
-            obtenerSiguienteToken()
             if(tokenActual.categoria==Categoria.OPERADOR_LOGICO){
                 var operadorLogico= tokenActual
                 obtenerSiguienteToken()
                 var expresion = esExpresionLogica()
                 return ExpresionLogica(relacional,expresion,operadorLogico)
             }else{
+                obtenerSiguienteToken()
                 return ExpresionLogica(relacional,null,null)
             }
         }else{
@@ -259,19 +268,17 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     fun esExpresionRelacional(): ExpresionRelacional? {
         var componente1= esComponente()
         if(componente1!=null){
-            obtenerSiguienteToken()
             if(tokenActual.categoria==Categoria.OPERADOR_RELACIONAL){
+                var operadorRelacional = tokenActual
                 obtenerSiguienteToken()
                 var componente2= esComponente()
                 if(componente2!=null){
-                    obtenerSiguienteToken()
-
-                    return ExpresionRelacional()
+                    return ExpresionRelacional(componente1, operadorRelacional, componente2)
                 }else{
                     reportarError("Componente 2 no valido")
                 }
             }else{
-                reportarError("Se necesita operador relacional valido")
+                reportarError("Se necesita operador relacional válido")
             }
         }else{
             reportarError("Componente 1 no valido")

@@ -6,14 +6,15 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
 // Min 32 vid 2
     fun main(){
 
-    val lexico= AnalizadorLexico("|M| asdas PAL \"REL aca \" < >")
+    val lexico= AnalizadorLexico("|M| funcion ENT \"ENT par\" < " +
+            "VI\"@12>:~@6\"<> " +
+            ">")
         lexico.analizar()
-        //print(lexico.listaTokens)
-
+        //println(lexico.listaTokens)
     val sintaxis= AnalizadorSintactico(lexico.listaTokens)
-    print(sintaxis.esUnidadDeCompilacion())
+    println(sintaxis.esUnidadDeCompilacion())
     print("\n")
-    print(sintaxis.listaErrores)
+    println(sintaxis.listaErrores)
     }
 /*
 //Variable

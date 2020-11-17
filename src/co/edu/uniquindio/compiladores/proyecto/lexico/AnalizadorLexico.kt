@@ -106,7 +106,7 @@ class AnalizadorLexico(var codigoFuente:String) {
         }
         return false
     }
-    
+
     fun esIgualIgual():Boolean{
         if (caracterActual == ':'){
             var lexema = ""
