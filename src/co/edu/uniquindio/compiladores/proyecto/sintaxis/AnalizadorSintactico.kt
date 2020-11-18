@@ -181,6 +181,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
 
         while(sentencia!=null){
             listaSentencia.add(sentencia)
+            sentencia= esSentencia()
         }
         if(listaSentencia.isEmpty())
             return null
@@ -203,9 +204,13 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 }else{
                     reportarError("Sentencia inválida")
                 }
-            }//else if(verificarDeclaracionVariables(tokenActual)){ }
-            else if (tokenActual.lexema=="WHEN"||tokenActual.lexema=="DO"){
+            }else if (tokenActual.lexema=="WHEN"||tokenActual.lexema=="DO"){
 
+            }else {
+                var sentencia = esDeclaracionVariable()
+                if(sentencia!=null){
+                    return Sentencia(sentencia)
+                }
             }
         }
         obtenerSiguienteToken()
@@ -226,8 +231,11 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     var bloqueSentencia= esBloqueSentencias()
                     if(bloqueSentencia!= null){
                         obtenerSiguienteToken()
-                        var bloqueSentencia1= esBloqueSentencias()
-                        obtenerSiguienteToken()
+                        var bloqueSentencia1:ArrayList<Sentencia>? = null
+                        if(tokenActual.categoria == Categoria.APERTURA_BLOQUE_SENTENCIA){
+                            bloqueSentencia1= esBloqueSentencias()
+                            obtenerSiguienteToken()
+                        }
                         return BloqueDesicion(expresionLogica, bloqueSentencia, bloqueSentencia1)
                     }else{
                         reportarError("El bloque de sentencias está vacío")
@@ -350,7 +358,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     fun esParametro(): Parametro?{
         val tipoDato= esTipoDato()
         if(tipoDato!=null){
-            obtenerSiguienteToken()
             if (tokenActual.categoria==Categoria.IDENTIFICADOR){
                 val nombre= tokenActual
                 obtenerSiguienteToken()
@@ -365,9 +372,11 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      */
     fun esTipoDato(): Token?{
         if (tokenActual.categoria == Categoria.RESERVADA){
-            if (tokenActual.lexema=="REL"||tokenActual.lexema=="ENT"||tokenActual.lexema=="PAL"||
-                    tokenActual.lexema=="LOGI"){
-                return tokenActual
+            var tipo = tokenActual
+            if (tipo.lexema=="REL"||tipo.lexema=="ENT"||tipo.lexema=="PAL"||
+                    tipo.lexema=="LOGI"){
+                obtenerSiguienteToken()
+                return tipo
             }
         }
         return null
@@ -384,6 +393,35 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             return tokenActual
         }
         return null
+    }
+
+    /**
+     *<DeclaracionVariables>::= [constante] <TipoDato> variable operadorFinal
+     *  | <TipoDato>  variable operadorAsignacion <Dato> operadorFinal
+     *  | <DeclararArreglo> operadorFinal | <DeclararMatriz> operadorFinal
+     */
+    fun esDeclaracionVariable(): DeclararVariable?{
+        if(tokenActual.categoria==Categoria.RESERVADA) {
+            if (tokenActual.lexema == "CONS") {
+                var constante = tokenActual
+                obtenerSiguienteToken()
+            }
+            var tipoDato = esTipoDato()
+            if (tipoDato != null) {
+                if(tokenActual.categoria == Categoria.IDENTIFICADOR){
+                    var variable =  tokenActual
+                    obtenerSiguienteToken()
+                    if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
+                        return DeclararVariable(null, tipoDato, variable, null, null, tokenActual)
+                    }
+                }else if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
+
+                }
+            }else{
+                reportarError("La variable debe tener un tipo de dato especificado.")
+            }
+        }
+    return null
     }
 
     /**
