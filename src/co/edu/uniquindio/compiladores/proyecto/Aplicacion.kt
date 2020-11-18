@@ -7,8 +7,9 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
     fun main(){
 
     val lexico= AnalizadorLexico("|M| funcion ENT \"ENT par\" < " +
-            "VI\"@12>:~@6\" <" +
-            "ENT variable_ " +
+            "VI\"@12>:~@6 % @1<:~@6 \" <" +
+            "CONS ENT variable_ " +
+            "CONS ENT ¿@5? array_" +
             "> " +
             ">")
         lexico.analizar()

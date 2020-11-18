@@ -20,7 +20,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     }
 
     fun hacerBT(movido:Int){
-        posicionActual=posicionActual-movido
+        posicionActual=movido
         tokenActual=listaTokens[posicionActual]
     }
 
@@ -193,7 +193,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                         <BloqueCiclos> | <Lectura> | <InvocacionFuncion>| [<Retorno>]
      */
     fun esSentencia(): Sentencia?{
-
         if(tokenActual.categoria==Categoria.RESERVADA){
             if(tokenActual.lexema=="VI"){
                 obtenerSiguienteToken()
@@ -206,11 +205,16 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 }
             }else if (tokenActual.lexema=="WHEN"||tokenActual.lexema=="DO"){
 
+            }else if (tokenActual.lexema=="PRT"){
+
+            }else if (tokenActual.lexema==" RD"){
+
             }else {
                 var sentencia = esDeclaracionVariable()
                 if(sentencia!=null){
                     return Sentencia(sentencia)
                 }
+
             }
         }
         obtenerSiguienteToken()
@@ -400,28 +404,65 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      *  | <TipoDato>  variable operadorAsignacion <Dato> operadorFinal
      *  | <DeclararArreglo> operadorFinal | <DeclararMatriz> operadorFinal
      */
-    fun esDeclaracionVariable(): DeclararVariable?{
+    fun esDeclaracionVariable(): Any?{
         if(tokenActual.categoria==Categoria.RESERVADA) {
             if (tokenActual.lexema == "CONS") {
                 var constante = tokenActual
                 obtenerSiguienteToken()
             }
+            var posicionInicial = posicionActual
             var tipoDato = esTipoDato()
             if (tipoDato != null) {
                 if(tokenActual.categoria == Categoria.IDENTIFICADOR){
                     var variable =  tokenActual
                     obtenerSiguienteToken()
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
-                        return DeclararVariable(null, tipoDato, variable, null, null, tokenActual)
+                        obtenerSiguienteToken()
+                        return DeclararVariable(null, tipoDato, variable, null, null)
                     }
                 }else if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
-
+                    hacerBT(posicionInicial)
+                    var arreglo = esDeclaracionArreglo()
+                    if(arreglo != null){
+                        return arreglo
+                    }
                 }
             }else{
                 reportarError("La variable debe tener un tipo de dato especificado.")
             }
         }
     return null
+    }
+
+    /**
+     * <DeclararArreglo>::=  <TipoDato> abrirArreglo numeroEntero cerrarArreglo  variable operadorFinal
+     * | <TipoDato> abrirArreglo cerrarArreglo variable operadorAsignacion <Arreglo>
+     */
+    fun esDeclaracionArreglo(): DeclararArreglo?{
+        var posicionInicial = posicionActual
+        var tipoDato = esTipoDato()
+        if (tipoDato != null) {
+            if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
+                obtenerSiguienteToken()
+                if(tokenActual.categoria == Categoria.ENTERO){
+                    obtenerSiguienteToken()
+                    if(tokenActual.categoria == Categoria.CERRAR_ARREGLO){
+                        obtenerSiguienteToken()
+                        if(tokenActual.categoria == Categoria.IDENTIFICADOR){
+                            var variable = tokenActual
+                            obtenerSiguienteToken()
+                            if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
+                                obtenerSiguienteToken()
+                                return DeclararArreglo(tipoDato, variable, null)
+                            }else if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null
     }
 
     /**
