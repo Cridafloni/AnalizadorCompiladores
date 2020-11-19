@@ -282,12 +282,12 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * <ExpresiónRelacional>::= <Dato> operadorRelacional <Dato>
      */
     fun esExpresionRelacional(): ExpresionRelacional? {
-        var componente1= esDato()
+        var componente1= esDato(true)
         if(componente1!=null){
             if(tokenActual.categoria==Categoria.OPERADOR_RELACIONAL){
                 var operadorRelacional = tokenActual
                 obtenerSiguienteToken()
-                var componente2= esDato()
+                var componente2= esDato(true)
                 if(componente2!=null){
                     return ExpresionRelacional(componente1, operadorRelacional, componente2)
                 }else{
@@ -306,18 +306,12 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * <ExpresiónAritmética>::= <Dato> operadorAritmético <Dato> [operadorAritmético  <Dato>]
      */
     fun esExpresionAritmetica(): ExpresionAritmetica?{
-        var dato1 = esDato()
+        var dato1 = esDato(false)
         if(dato1!=null){
             if(tokenActual.categoria == Categoria.OPERADOR_ARITMETICO){
                 obtenerSiguienteToken()
-                var posicionInicial = posicionActual
-                var dato2 = esDato()
-                if(dato2!=null){
-                    if(tokenActual.categoria == Categoria.OPERADOR_ARITMETICO){
-                        hacerBT(posicionInicial)
-                        return ExpresionAritmetica(dato1, esExpresionAritmetica())
-                    }
-                }
+                var dato2 = esDato(true)
+                return ExpresionAritmetica(dato1, dato2)
             }
         }
         return null
@@ -388,11 +382,18 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * <Dato> ::=  numeroEntero | numeroReal | <ListaCadena>|  logicos
      * | <Arreglo> | <ExpresiónAritmética> | <Matriz> | <InvocacionFuncion>| variable
      */
-    fun esDato():Dato?{
+    fun esDato(expresionAritmetica: Boolean):Dato?{
         var posicionInicial = posicionActual
         var invocacion = esInvocacionFuncion();
         if(invocacion!=null){
             return Dato(invocacion)
+        }
+        if(expresionAritmetica){
+            hacerBT(posicionInicial)
+            var expresion = esExpresionAritmetica()
+            if(expresion!=null){
+                return Dato(expresion)
+            }
         }
         hacerBT(posicionInicial)
         if(tokenActual.categoria==Categoria.ENTERO||tokenActual.categoria==Categoria.CADENA_CARACTER
@@ -478,7 +479,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             obtenerSiguienteToken()
             if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
                 obtenerSiguienteToken()
-                var dato = esDato()
+                var dato = esDato(true)
                 if(dato!=null){
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
                         obtenerSiguienteToken()

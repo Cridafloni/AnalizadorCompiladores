@@ -8,7 +8,7 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
 
     val lexico= AnalizadorLexico("" +
             "|M| funcion ENT \"ENT par\" < " +
-                "VI\"@12>:~@6 % @1<:~@6 \" <" +
+                "VI\"@12>:~@6&+@5 % @1<:~@6 \" <" +
                     "CONS ENT variable_ " +
                     "PAL variablo_" +
                     "CONS ENT ¿@5? array_" +
