@@ -15,6 +15,7 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
                     "REL ¿@9? arraos_" +
                 "> <" +
                     "CONS REL variable_ " +
+                    "variable:~@3_" +
                 "> " +
             ">")
         lexico.analizar()

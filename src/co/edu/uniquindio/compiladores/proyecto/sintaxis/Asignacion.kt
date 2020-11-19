@@ -1,7 +1,7 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
-class Dato (var dato: Any) {
+class Asignacion (var dato: Dato) {
     override fun toString(): String {
-        return "Dato(dato=$dato)"
+        return "Asignacion(dato=$dato)"
     }
 }

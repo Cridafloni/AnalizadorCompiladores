@@ -207,7 +207,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
 
             }else if (tokenActual.lexema=="PRT"){
 
-            }else if (tokenActual.lexema=="RD"){
+            }else if (tokenActual.lexema=="RD") {
 
             }else {
                 var sentencia = esDeclaracionVariable()
@@ -217,6 +217,11 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     reportarError("La sentencia es inválida")
                 }
 
+            }
+        }else if(tokenActual.categoria == Categoria.IDENTIFICADOR) {
+            var sentencia = esAsignacion()
+            if (sentencia != null) {
+                return Sentencia(sentencia)
             }
         }
         return null
@@ -274,15 +279,15 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     }
 
     /**
-     * <ExpresiónRelacional>::= <componente> operadorRelacional <componente>
+     * <ExpresiónRelacional>::= <Dato> operadorRelacional <Dato>
      */
     fun esExpresionRelacional(): ExpresionRelacional? {
-        var componente1= esComponente()
+        var componente1= esDato()
         if(componente1!=null){
             if(tokenActual.categoria==Categoria.OPERADOR_RELACIONAL){
                 var operadorRelacional = tokenActual
                 obtenerSiguienteToken()
-                var componente2= esComponente()
+                var componente2= esDato()
                 if(componente2!=null){
                     return ExpresionRelacional(componente1, operadorRelacional, componente2)
                 }else{
@@ -297,21 +302,23 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         return null
     }
 
-    fun esComponente():Any?{
-        var esdato= esDato()
-        var invocacion= esInvocacionFuncion()
-        var variable = tokenActual
-        if(tokenActual.categoria==Categoria.IDENTIFICADOR){
-            if(invocacion!=null){
+    /**
+     * <ExpresiónAritmética>::= <Dato> operadorAritmético <Dato> [operadorAritmético  <Dato>]
+     */
+    fun esExpresionAritmetica(): ExpresionAritmetica?{
+        var dato1 = esDato()
+        if(dato1!=null){
+            if(tokenActual.categoria == Categoria.OPERADOR_ARITMETICO){
                 obtenerSiguienteToken()
-                return invocacion
-            }else{
-                obtenerSiguienteToken()
-                return variable
+                var posicionInicial = posicionActual
+                var dato2 = esDato()
+                if(dato2!=null){
+                    if(tokenActual.categoria == Categoria.OPERADOR_ARITMETICO){
+                        hacerBT(posicionInicial)
+                        return ExpresionAritmetica(dato1, esExpresionAritmetica())
+                    }
+                }
             }
-        }else if(esdato!=null){
-            obtenerSiguienteToken()
-            return esdato
         }
         return null
     }
@@ -330,6 +337,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
                     obtenerSiguienteToken()
                     if (tokenActual.categoria==Categoria.OPERADOR_FINAL){
+                        obtenerSiguienteToken()
                         return FuncionInvocada(nombre,listaParametros)
                     }else{
                         reportarError("Falta operador final")
@@ -343,17 +351,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         }
         return null
     }
-    /**fun verificarDeclaracionVariables(tokenActual: Token): Boolean {
-        if(tokenActual.lexema=="CONS"){
-            obtenerSiguienteToken()
-            if (){
-
-            }
-        }
-
-        return false
-    }
-*/
     /**
      * <parámetro>::= <TipoDato> identificador
      */
@@ -365,6 +362,8 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 val nombre= tokenActual
                 obtenerSiguienteToken()
                 return Parametro(nombre,tipoDato)
+            }else{
+                reportarError("El parámetro debe llevar un identificador")
             }
         }
         return null
@@ -386,15 +385,24 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     }
 
     /**
-     *
-    <Dato> ::=  numeroEntero | numeroReal | <ListaCadena>|  logicos | <Arreglo> |
-                <ExpresiónAritmética>|<Matriz>
+     * <Dato> ::=  numeroEntero | numeroReal | <ListaCadena>|  logicos
+     * | <Arreglo> | <ExpresiónAritmética> | <Matriz> | <InvocacionFuncion>| variable
      */
-    fun esDato():Token?{
-        if(tokenActual.categoria==Categoria.ENTERO||tokenActual.categoria==Categoria.CADENA_CARACTER
-                ||tokenActual.categoria==Categoria.DECIMAL||tokenActual.categoria==Categoria.LOGICO){
-            return tokenActual
+    fun esDato():Dato?{
+        var posicionInicial = posicionActual
+        var invocacion = esInvocacionFuncion();
+        if(invocacion!=null){
+            return Dato(invocacion)
         }
+        hacerBT(posicionInicial)
+        if(tokenActual.categoria==Categoria.ENTERO||tokenActual.categoria==Categoria.CADENA_CARACTER
+                ||tokenActual.categoria==Categoria.DECIMAL||tokenActual.categoria==Categoria.OPERADOR_LOGICO
+                ||tokenActual.categoria == Categoria.IDENTIFICADOR){
+            var dato = tokenActual
+            obtenerSiguienteToken()
+            return Dato(dato)
+        }
+
         return null
     }
 
@@ -414,6 +422,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             var tipoDato = esTipoDato()
             if (tipoDato != null) {
                 if(tokenActual.categoria == Categoria.IDENTIFICADOR){
+
                     var variable =  tokenActual
                     obtenerSiguienteToken()
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
@@ -463,6 +472,24 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             }
         }
         return null
+    }
+    fun esAsignacion():Asignacion?{
+        if(tokenActual.categoria == Categoria.IDENTIFICADOR){
+            obtenerSiguienteToken()
+            if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
+                obtenerSiguienteToken()
+                var dato = esDato()
+                if(dato!=null){
+                    if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
+                        obtenerSiguienteToken()
+                        return Asignacion(dato)
+                    }
+                }else{
+                    reportarError("La asignación debe tener un dato")
+                }
+            }
+        }
+    return null
     }
 
     /**
