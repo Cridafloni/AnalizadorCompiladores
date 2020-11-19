@@ -6,11 +6,16 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
 // Min 32 vid 2
     fun main(){
 
-    val lexico= AnalizadorLexico("|M| funcion ENT \"ENT par\" < " +
-            "VI\"@12>:~@6 % @1<:~@6 \" <" +
-            "CONS ENT variable_ " +
-            "CONS ENT ¿@5? array_" +
-            "> " +
+    val lexico= AnalizadorLexico("" +
+            "|M| funcion ENT \"ENT par\" < " +
+                "VI\"@12>:~@6 % @1<:~@6 \" <" +
+                    "CONS ENT variable_ " +
+                    "PAL variablo_" +
+                    "CONS ENT ¿@5? array_" +
+                    "REL ¿@9? arraos_" +
+                "> <" +
+                    "CONS REL variable_ " +
+                "> " +
             ">")
         lexico.analizar()
         //println(lexico.listaTokens)

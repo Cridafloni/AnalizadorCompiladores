@@ -157,7 +157,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     fun esBloqueSentencias():ArrayList<Sentencia>?{
         if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_SENTENCIA){
             obtenerSiguienteToken()
-
             var listaSentencias= esListaSentencias()
             if (tokenActual.categoria==Categoria.CIERRE_BLOQUE_SENTENCIA){
                 obtenerSiguienteToken()
@@ -183,8 +182,9 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             listaSentencia.add(sentencia)
             sentencia= esSentencia()
         }
-        if(listaSentencia.isEmpty())
+        if(listaSentencia.isEmpty()){
             return null
+        }
         return listaSentencia
     }
 
@@ -207,17 +207,18 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
 
             }else if (tokenActual.lexema=="PRT"){
 
-            }else if (tokenActual.lexema==" RD"){
+            }else if (tokenActual.lexema=="RD"){
 
             }else {
                 var sentencia = esDeclaracionVariable()
                 if(sentencia!=null){
                     return Sentencia(sentencia)
+                }else{
+                    reportarError("La sentencia es inválida")
                 }
 
             }
         }
-        obtenerSiguienteToken()
         return null
     }
 
@@ -231,14 +232,12 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
 
             var expresionLogica= esExpresionLogica()
             if(expresionLogica!=null){
-                if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_SENTENCIA){
-                    var bloqueSentencia= esBloqueSentencias()
-                    if(bloqueSentencia!= null){
-                        obtenerSiguienteToken()
-                        var bloqueSentencia1:ArrayList<Sentencia>? = null
+                if (tokenActual.categoria == Categoria.APERTURA_BLOQUE_SENTENCIA){
+                    var bloqueSentencia = esBloqueSentencias()
+                    if(bloqueSentencia != null){
+                        var bloqueSentencia1:ArrayList<Sentencia>?=null
                         if(tokenActual.categoria == Categoria.APERTURA_BLOQUE_SENTENCIA){
-                            bloqueSentencia1= esBloqueSentencias()
-                            obtenerSiguienteToken()
+                            bloqueSentencia1 = esBloqueSentencias()
                         }
                         return BloqueDesicion(expresionLogica, bloqueSentencia, bloqueSentencia1)
                     }else{
@@ -406,8 +405,9 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      */
     fun esDeclaracionVariable(): Any?{
         if(tokenActual.categoria==Categoria.RESERVADA) {
+            var constante:Token? = null
             if (tokenActual.lexema == "CONS") {
-                var constante = tokenActual
+                constante = tokenActual
                 obtenerSiguienteToken()
             }
             var posicionInicial = posicionActual
@@ -418,7 +418,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     obtenerSiguienteToken()
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
                         obtenerSiguienteToken()
-                        return DeclararVariable(null, tipoDato, variable, null, null)
+                        return DeclararVariable(constante, tipoDato, variable, null, null)
                     }
                 }else if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
                     hacerBT(posicionInicial)
