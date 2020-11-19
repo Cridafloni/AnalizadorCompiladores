@@ -495,7 +495,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             }
         }
         if(recorrido.equals(lexema) && lexema.isNotEmpty()){
-            almacenarToken(lexema, Categoria.OPERADOR_LOGICO, filaInicial, columnaInicial)
+            almacenarToken(lexema, Categoria.LOGICO, filaInicial, columnaInicial)
 
             return true
             }

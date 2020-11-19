@@ -392,7 +392,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      */
     fun esDato():Token?{
         if(tokenActual.categoria==Categoria.ENTERO||tokenActual.categoria==Categoria.CADENA_CARACTER
-                ||tokenActual.categoria==Categoria.DECIMAL||tokenActual.categoria==Categoria.OPERADOR_LOGICO){
+                ||tokenActual.categoria==Categoria.DECIMAL||tokenActual.categoria==Categoria.LOGICO){
             return tokenActual
         }
         return null
@@ -471,5 +471,4 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     fun esListaVariableGlobal(): ArrayList<VariableGlobal>{
         return ArrayList()
     }
-
 }
