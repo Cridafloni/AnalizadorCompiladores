@@ -17,6 +17,7 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
                     "CONS REL variable_ " +
                     "variable :~ @3 &+ @23 &- $3~5 &/ @5_" +
                     "cadenita :~ ^esto es una cadenita^_" +
+                    "val :~ variab_" +
                 "> " +
             ">")
         lexico.analizar()

@@ -339,8 +339,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 }else{
                     reportarError("Falta cerrar el bloque")
                 }
-            }else{
-                reportarError("Falta cerrar el bloque")
             }
         }
         return null
@@ -588,3 +586,4 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
 
     }
 }
+
