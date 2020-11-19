@@ -8,14 +8,15 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
 
     val lexico= AnalizadorLexico("" +
             "|M| funcion ENT \"ENT par\" < " +
-                "VI\"@12>:~@6&+@5 % @1<:~@6 \" <" +
+                "VI\"@12 >:~ @6 &+ @5 % @1 <:~ @6 \" <" +
                     "CONS ENT variable_ " +
                     "PAL variablo_" +
                     "CONS ENT ¿@5? array_" +
                     "REL ¿@9? arraos_" +
                 "> <" +
                     "CONS REL variable_ " +
-                    "variable:~@3_" +
+                    "variable :~ @3 &+ @23 &- $3~5 &/ @5_" +
+                    "cadenita :~ ^esto es una cadenita^_" +
                 "> " +
             ">")
         lexico.analizar()

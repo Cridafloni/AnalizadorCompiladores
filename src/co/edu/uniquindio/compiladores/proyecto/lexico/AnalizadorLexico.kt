@@ -24,10 +24,7 @@ class AnalizadorLexico(var codigoFuente:String) {
 
         while (caracterActual != finCodigo){
 
-            if (caracterActual == ' ' || caracterActual=='\t' || caracterActual=='\n'){
-                obtenerSiguienteCaracter()
-                continue
-            }
+
             //Palabras reservadas
             if(esImprimir())continue
             if(esLeer())continue
@@ -79,8 +76,14 @@ class AnalizadorLexico(var codigoFuente:String) {
 
 
             if(caracterActual!=finCodigo){
-               almacenarToken(""+caracterActual, Categoria.DESCONOCIDO,filaActual,columnaActual)
-               obtenerSiguienteCaracter()
+                if (caracterActual == ' ' || caracterActual=='\t' || caracterActual=='\n'){
+                    obtenerSiguienteCaracter()
+                    continue
+                }else{
+                    almacenarToken(""+caracterActual, Categoria.DESCONOCIDO,filaActual,columnaActual)
+                    obtenerSiguienteCaracter()
+                }
+
            }
         }
     }

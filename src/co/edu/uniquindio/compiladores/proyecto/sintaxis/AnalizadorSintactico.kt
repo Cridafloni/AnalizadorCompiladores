@@ -476,6 +476,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     }
     fun esAsignacion():Asignacion?{
         if(tokenActual.categoria == Categoria.IDENTIFICADOR){
+            var identificador = tokenActual
             obtenerSiguienteToken()
             if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
                 obtenerSiguienteToken()
@@ -483,7 +484,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 if(dato!=null){
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
                         obtenerSiguienteToken()
-                        return Asignacion(dato)
+                        return Asignacion(identificador, dato)
                     }
                 }else{
                     reportarError("La asignación debe tener un dato")
