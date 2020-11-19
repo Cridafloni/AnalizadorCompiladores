@@ -500,4 +500,45 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     fun esListaVariableGlobal(): ArrayList<VariableGlobal>{
         return ArrayList()
     }
+    /**
+     * <Impresión>::= imprimir comillasAbriendo <ListaCadena> comillasCerrando operadorFinal
+     */
+    fun esImplesion(): Impresion?{
+        if(tokenActual.categoria == Categoria.RESERVADA)
+        {
+            if(tokenActual.lexema == "ptr") {
+                var token = tokenActual
+                obtenerSiguienteToken()
+                if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+                    
+                }
+            }
+
+        }
+        return null
+    }
+
+    /**
+     * <ListaCadena>::=  cadenaDeCaracteres  [operadorConcatenacion variable operadorConcatenacion
+     */
+    fun esListaCadena(): ArrayList<Token>
+    {
+        var listaCadena = ArrayList<Token>()
+        var cadena= esCadena()
+
+
+
+        return listaCadena
+    }
+
+    /**
+     * metodo esCadena
+     */
+    fun esCadena(): Token?{
+        if(tokenActual.categoria==Categoria.CADENA_CARACTER)
+        {
+            return tokenActual
+        }
+        return null
+    }
 }
