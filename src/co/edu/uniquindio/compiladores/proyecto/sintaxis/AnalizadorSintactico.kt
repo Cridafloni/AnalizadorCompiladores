@@ -521,11 +521,9 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     /**
      * <ListaCadena>::=  cadenaDeCaracteres  [operadorConcatenacion variable operadorConcatenacion
      */
-    fun esListaCadena(): ArrayList<Token>
-    {
+    fun esListaCadena(): ArrayList<Token> {
         var listaCadena = ArrayList<Token>()
         var cadena= esCadena()
-
 
 
         return listaCadena
@@ -540,5 +538,53 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             return tokenActual
         }
         return null
+    }
+
+
+    /**
+     * <Arreglo>::= comillasAbriendo <ListaDatos> comillasCerrando
+     */
+    fun esArreglo(): Arreglo?{
+        if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+            var listaDatos = esListaDatos()
+
+            if(listaDatos!= null){
+                if(tokenActual.categoria!=Categoria.APERTURA_BLOQUE_AGRUPACION)
+                {
+                    reportarError("Falta un punto y coma en la lista de datos")
+
+                }
+                obtenerSiguienteToken()
+                return Arreglo(listaDatos)
+            }
+        }
+        return null
+    }
+    /**
+     * <ListaDatos>::= <Dato> [operadorSeparador<ListaDatos>]
+     */
+    private fun esListaDatos(): ArrayList<Dato> {
+        var listaDatos= ArrayList<Dato>()
+        var dato = esDato(true)
+
+        while (dato!=null){
+            listaDatos.add(dato)
+            obtenerSiguienteToken()
+
+            if(tokenActual.lexema==";"&& tokenActual.categoria==Categoria.SEPARADOR){
+                obtenerSiguienteToken()
+                dato=esDato(true)
+            }else{
+                if(tokenActual.categoria!=Categoria.APERTURA_BLOQUE_AGRUPACION)
+                {
+                    reportarError("Falta un punto y coma en la lista de datos")
+
+                }
+                break
+            }
+        }
+        return listaDatos
+
+
     }
 }
