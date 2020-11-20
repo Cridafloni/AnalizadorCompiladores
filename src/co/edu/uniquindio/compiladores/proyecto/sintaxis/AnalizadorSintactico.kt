@@ -523,14 +523,26 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     /**
      * <Impresión>::= imprimir comillasAbriendo <ListaCadena> comillasCerrando operadorFinal
      */
-    fun esImplesion(): Impresion?{
+    fun esImpresion(): Impresion?{
         if(tokenActual.categoria == Categoria.RESERVADA)
         {
-            if(tokenActual.lexema == "ptr") {
+            if(tokenActual.lexema == "PRT") {
                 var token = tokenActual
                 obtenerSiguienteToken()
                 if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
-                    
+                    obtenerSiguienteToken()
+                    var aux= esListaCadena()
+                    if(aux!= null)
+                    {
+                        if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION )
+                        {
+                            obtenerSiguienteToken()
+                            if(tokenActual.categoria == Categoria.OPERADOR_FINAL)
+                            {
+                                return Impresion(aux)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -539,26 +551,80 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     }
 
     /**
-     * <ListaCadena>::=  cadenaDeCaracteres  [operadorConcatenacion variable operadorConcatenacion
+     * <ListaCadena>::=  cadenaDeCaracteres  [operadorConcatenacion variable operadorConcatenacion <ListaCadena>]
      */
-    fun esListaCadena(): ArrayList<Token> {
+    fun esListaCadena(): ArrayList<Token>? {
         var listaCadena = ArrayList<Token>()
-        var cadena= esCadena()
 
-
-        return listaCadena
-    }
-
-    /**
-     * metodo esCadena
-     */
-    fun esCadena(): Token?{
         if(tokenActual.categoria==Categoria.CADENA_CARACTER)
         {
-            return tokenActual
+            listaCadena.add(tokenActual)
+            obtenerSiguienteToken()
+            while(tokenActual.lexema == "+" && tokenActual.categoria== Categoria.CONCATENACION)
+            {
+                obtenerSiguienteToken()
+                if(tokenActual.categoria == Categoria.IDENTIFICADOR)
+                {
+                    listaCadena.add(tokenActual)
+                    obtenerSiguienteToken()
+                    if(tokenActual.lexema == "+" && tokenActual.categoria== Categoria.CONCATENACION)
+                    {
+                        obtenerSiguienteToken()
+                        if(tokenActual.categoria==Categoria.CADENA_CARACTER)
+                        {
+                            listaCadena.add(tokenActual)
+                            obtenerSiguienteToken()
+                        }else{
+                            reportarError("Falta una cadena por concatenar")
+                        }
+                    }else{
+                        reportarError("Falta una cadena por concatenar")
+                    }
+                }else{
+                    reportarError("Identificador no valido")
+                }
+            }
+
+            return listaCadena
+        }else{
+            return null
+        }
+
+
+
+
+    }
+    /**
+     *<Lectura>::= leer  comillasAbriendo comillasCerrando operadorFinal
+     */
+    fun esLectura(): FuncionInvocada?{
+        if(tokenActual.categoria == Categoria.RESERVADA){
+            if(tokenActual.lexema == "RD"){
+                var aux= tokenActual
+                obtenerSiguienteToken()
+                if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+                    obtenerSiguienteToken()
+                    if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION) {
+                        obtenerSiguienteToken()
+                        if(tokenActual.categoria== Categoria.OPERADOR_FINAL)
+                        {
+                            var vacia = ArrayList<Parametro>()
+                            return FuncionInvocada(aux,vacia)
+                        }else{
+                            reportarError("Falta operador Final")
+                        }
+                    }else{
+                        reportarError("Falta cierre de agrupacion")
+                    }
+                }else{
+                    reportarError("Falta apertura de agrupacion")
+                }
+            }
         }
         return null
     }
+
+
 
 
     /**
