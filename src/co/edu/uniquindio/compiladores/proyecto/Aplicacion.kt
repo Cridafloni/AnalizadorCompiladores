@@ -11,13 +11,15 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
                 "VI\"@12 >:~ @6 &+ @5 % @1 <:~ @6 \" <" +
                     "CONS ENT variable_ " +
                     "PAL variablo_" +
-                    "CONS ENT ¿@5? array_" +
+                    "CONS ENT ¿@5? array :~  \"@12;@23;SIMON\"_" +
                     "REL ¿@9? arraos_" +
                 "> <" +
                     "CONS REL variable_ " +
                     "variable :~ @3 &+ @23 &- $3~5 &/ @5_" +
                     "cadenita :~ ^esto es una cadenita^_" +
                     "val :~ variab_" +
+                    "arreglo :~ \"@12;$32~4;^cadena^\"_" +
+                    "PAL palabra :~ ^hola mundo^_" +
                 "> " +
             ">")
         lexico.analizar()

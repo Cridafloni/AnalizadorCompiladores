@@ -382,6 +382,10 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      */
     fun esDato(expresionAritmetica: Boolean):Dato?{
         var posicionInicial = posicionActual
+        var arreglo = esArreglo()
+        if(arreglo !=null){
+            return  Dato(arreglo)
+        }
         var invocacion = esInvocacionFuncion();
         if(invocacion!=null){
             return Dato(invocacion)
@@ -427,12 +431,21 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
                         obtenerSiguienteToken()
                         return DeclararVariable(constante, tipoDato, variable, null, null)
+                    }else if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
+                        hacerBT(posicionInicial)
+                        var tipoDato = esTipoDato()
+                        if (tipoDato != null) {
+                            var asignacion = esAsignacion()
+                            if(asignacion!=null){
+                                return DeclararVariable(constante, tipoDato, null, asignacion, null)
+                            }
+                        }
                     }
                 }else if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
                     hacerBT(posicionInicial)
                     var arreglo = esDeclaracionArreglo()
                     if(arreglo != null){
-                        return arreglo
+                        return DeclararVariable(constante, null, null, null, arreglo)
                     }
                 }
             }else{
@@ -456,6 +469,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     obtenerSiguienteToken()
                     if(tokenActual.categoria == Categoria.CERRAR_ARREGLO){
                         obtenerSiguienteToken()
+                        var posicionInicial = posicionActual
                         if(tokenActual.categoria == Categoria.IDENTIFICADOR){
                             var variable = tokenActual
                             obtenerSiguienteToken()
@@ -463,8 +477,16 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                                 obtenerSiguienteToken()
                                 return DeclararArreglo(tipoDato, variable, null)
                             }else if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
+                                hacerBT(posicionInicial)
+                                var asignacion = esAsignacion()
+                                if(asignacion !=null){
+                                    return DeclararArreglo(tipoDato, null, asignacion)
+                                }else{
+                                    reportarError("La asignación del arreglo es incorrecta")
+                                }
 
                             }
+                        }else if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
                         }
                     }
                 }
@@ -544,8 +566,8 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      */
     fun esArreglo(): Arreglo?{
         if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+            obtenerSiguienteToken()
             var listaDatos = esListaDatos()
-
             if(listaDatos!= null){
                 if(tokenActual.categoria!=Categoria.APERTURA_BLOQUE_AGRUPACION)
                 {
@@ -567,7 +589,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
 
         while (dato!=null){
             listaDatos.add(dato)
-            obtenerSiguienteToken()
 
             if(tokenActual.lexema==";"&& tokenActual.categoria==Categoria.SEPARADOR){
                 obtenerSiguienteToken()
