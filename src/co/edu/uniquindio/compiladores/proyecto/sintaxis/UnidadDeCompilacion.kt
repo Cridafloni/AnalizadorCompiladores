@@ -13,6 +13,10 @@ class UnidadDeCompilacion (var listaFunciones: ArrayList<Funcion>, var listaVari
             raiz.children.add(f.getArbolVisual())
 
         }
+        for (f1 in listaVariablesGlobales){
+            raiz.children.add(f1.getArbolVisual())
+        }
+
             return raiz
     }
 

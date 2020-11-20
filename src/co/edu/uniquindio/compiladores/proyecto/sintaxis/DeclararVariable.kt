@@ -25,7 +25,7 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
     }
 
     override fun getArbolVisual(): TreeItem<String> {
-        var raiz = TreeItem("Decision")
+        var raiz = TreeItem("Dato")
 
         if (constante != null) {
             raiz.children.add(TreeItem("Constante: ${constante!!.lexema}"))

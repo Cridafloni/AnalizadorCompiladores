@@ -37,6 +37,7 @@ class InicioController : Initializable {
 
                 val sintaxis= AnalizadorSintactico(lexico.listaTokens)
                 val uc= sintaxis.esUnidadDeCompilacion()
+                print(uc)
                         if(uc!=null){
                             arbolVisual.root= uc.getArbolVisual()
                         }
