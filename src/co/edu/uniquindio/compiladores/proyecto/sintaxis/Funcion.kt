@@ -11,7 +11,7 @@ class Funcion(var nombreFuncion:Token, var tipoRetorno:Token?, var listaParametr
 
     fun getArbolVisual(): TreeItem<String> {
 
-        var raiz= TreeItem<String>("Función")
+        var raiz= TreeItem("Función")
         raiz.children.add(TreeItem("Nombre:${nombreFuncion.lexema}"))
         if(tipoRetorno!=null) {
             raiz.children.add(TreeItem("Tipo Retorno:${tipoRetorno!!.lexema}"))
