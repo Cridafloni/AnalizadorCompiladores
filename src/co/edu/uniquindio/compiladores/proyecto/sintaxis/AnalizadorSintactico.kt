@@ -30,7 +30,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     fun esUnidadDeCompilacion (): UnidadDeCompilacion?{
         val listaVariableGlobal: ArrayList<VariableGlobal> = esListaVariableGlobal()
         val listaFunciones: ArrayList<Funcion> = esListaFunciones()
-        return if(listaFunciones.size>=0){
+        return if(listaFunciones.size>=0 && listaVariableGlobal.size>=0){
             UnidadDeCompilacion(listaFunciones, listaVariableGlobal)
         }else null
 
@@ -99,11 +99,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             }else {
                 reportarError("No es un identificador valido")
             }
-        }else{
-            if(tokenActual.categoria !=  Categoria.CIERRE_BLOQUE_SENTENCIA){
-                reportarError("No  posee el parametro para el metodo")
-            }
-
         }
         return null
     }
