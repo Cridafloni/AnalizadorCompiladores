@@ -228,10 +228,17 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 }
             }
         }else if(tokenActual.categoria == Categoria.IDENTIFICADOR) {
-            var sentencia = esAsignacion()
+            var posicionInicial = posicionActual
+            var sentencia:Any? = esAsignacion()
             if (sentencia != null) {
                 return Sentencia(sentencia)
             }
+            hacerBT(posicionInicial)
+            sentencia = esInvocacionFuncion()
+            if(sentencia != null){
+                return Sentencia(sentencia)
+            }
+
         }
         return null
     }
