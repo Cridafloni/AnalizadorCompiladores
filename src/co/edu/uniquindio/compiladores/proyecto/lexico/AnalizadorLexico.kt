@@ -48,7 +48,6 @@ class AnalizadorLexico(var codigoFuente:String) {
                 //if(esBloqueSentencia()) continue
                 //if(esAgrupacion()) continue
             if(esAgrupacionAbierta()) continue
-            if(esAgrupacionCierre()) continue
             if(esSentenciaAbierta())continue
             if(esSentenciaCierre())continue
             if (esIdentificador())continue
@@ -380,22 +379,7 @@ class AnalizadorLexico(var codigoFuente:String) {
 
             lexema += caracterActual
             obtenerSiguienteCaracter()
-            almacenarToken(lexema,Categoria.APERTURA_BLOQUE_AGRUPACION,filaInicial,columnaInicial)
-            return true
-        }
-        return false
-    }
-
-    fun esAgrupacionCierre():Boolean{
-        if(caracterActual == '"'){
-            var lexema = ""
-            var filaInicial = filaActual
-            var columnaInicial = columnaActual
-            var posicionInicial = posicionActual
-
-            lexema += caracterActual
-            obtenerSiguienteCaracter()
-            almacenarToken(lexema,Categoria.CIERRE_BLOQUE_AGRUPACION,filaInicial,columnaInicial)
+            almacenarToken(lexema,Categoria.AGRUPADOR,filaInicial,columnaInicial)
             return true
         }
         return false

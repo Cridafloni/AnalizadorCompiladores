@@ -74,18 +74,17 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 if(tipoRetorno!= null){
                     obtenerSiguienteToken()
 
-                    if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION)
+                    if(tokenActual.categoria==Categoria.AGRUPADOR)
                     {
                         obtenerSiguienteToken()
                         var listaParametros= esListaParametros()
-                        if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION)
+                        if(tokenActual.categoria==Categoria.AGRUPADOR)
                         {
                             obtenerSiguienteToken()
 
                             var bloqueDeSentencia = esBloqueSentencias()
 
                             if(bloqueDeSentencia!=null){
-                                obtenerSiguienteToken()
                                 //Funcion bien escrita
                                 return Funcion(nombreFuncion,tipoRetorno, listaParametros,bloqueDeSentencia )
                             }else{
@@ -140,7 +139,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 obtenerSiguienteToken()
                 parametro=esParametro()
             }else{
-                if(tokenActual.categoria!=Categoria.APERTURA_BLOQUE_AGRUPACION)
+                if(tokenActual.categoria!=Categoria.AGRUPADOR)
                 {
                     reportarError("Falta un punto y coma en la lista de parametros")
 
@@ -196,16 +195,17 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     fun esSentencia(): Sentencia?{
         if(tokenActual.categoria==Categoria.RESERVADA){
             if(tokenActual.lexema=="VI"){
-                obtenerSiguienteToken()
                 var sentencia = esBloqueDecision()
                 if(sentencia!=null){
-                    obtenerSiguienteToken()
                     return Sentencia(sentencia)
                 }else{
                     reportarError("Sentencia inválida")
                 }
             }else if (tokenActual.lexema=="WHEN"||tokenActual.lexema=="DO"){
-
+                var sentencia = esBloqueCiclos()
+                if(sentencia != null){
+                    return Sentencia(sentencia)
+                }
             }else if (tokenActual.lexema=="PRT"){
                 var impresion = esImpresion()
                 if(impresion != null){
@@ -248,31 +248,73 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      *     comillasCerrando <BloqueSentencia>[<BloqueSentencia>]
      */
     fun esBloqueDecision(): BloqueDesicion? {
-        if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
-           obtenerSiguienteToken()
-
-            var expresionLogica= esExpresionLogica()
-            if(expresionLogica!=null){
-                if (tokenActual.categoria == Categoria.APERTURA_BLOQUE_SENTENCIA){
-                    var bloqueSentencia = esBloqueSentencias()
-                    if(bloqueSentencia != null){
-                        var bloqueSentencia1:ArrayList<Sentencia>?=null
-                        if(tokenActual.categoria == Categoria.APERTURA_BLOQUE_SENTENCIA){
-                            bloqueSentencia1 = esBloqueSentencias()
+        if(tokenActual.categoria == Categoria.RESERVADA && tokenActual.lexema == "VI"){
+            obtenerSiguienteToken()
+            if (tokenActual.categoria==Categoria.AGRUPADOR){
+                obtenerSiguienteToken()
+                var expresionLogica= esExpresionLogica()
+                if(expresionLogica!=null){
+                    if(tokenActual.categoria == Categoria.AGRUPADOR){
+                        obtenerSiguienteToken()
+                        var bloqueSentencia = esBloqueSentencias()
+                        if(bloqueSentencia != null){
+                            var bloqueSentencia1:ArrayList<Sentencia>?=null
+                            if(tokenActual.categoria == Categoria.APERTURA_BLOQUE_SENTENCIA){
+                                bloqueSentencia1 = esBloqueSentencias()
+                            }
+                            return BloqueDesicion(expresionLogica, bloqueSentencia, bloqueSentencia1)
+                        }else{
+                            reportarError("El bloque de sentencias está vacío")
                         }
-                        return BloqueDesicion(expresionLogica, bloqueSentencia, bloqueSentencia1)
-                    }else{
-                        reportarError("El bloque de sentencias está vacío")
                     }
+                }else{
+                    reportarError("Expresión lógica inválida")
                 }
-            }else{
-                reportarError("Expresión lógica inválida")
             }
         }
+
         return null
 
     }
-
+    fun esBloqueCiclos(): BloqueCiclos?{
+        if(tokenActual.categoria == Categoria.RESERVADA){
+            if (tokenActual.lexema=="WHEN"){
+                obtenerSiguienteToken()
+                if(tokenActual.categoria == Categoria.AGRUPADOR){
+                    obtenerSiguienteToken()
+                    var expresionLogica = esExpresionLogica()
+                    if(expresionLogica != null){
+                        if(tokenActual.categoria == Categoria.AGRUPADOR){
+                            obtenerSiguienteToken()
+                            var bloqueSentencias = esBloqueSentencias()
+                            if(bloqueSentencias != null){
+                                return BloqueCiclos(expresionLogica, bloqueSentencias)
+                            }
+                        }
+                    }
+                }
+            }else if(tokenActual.lexema=="DO"){
+                obtenerSiguienteToken()
+                var bloqueSentencias = esBloqueSentencias()
+                if(bloqueSentencias != null){
+                    if (tokenActual.lexema=="WHEN") {
+                        obtenerSiguienteToken()
+                        if(tokenActual.categoria == Categoria.AGRUPADOR) {
+                            obtenerSiguienteToken()
+                            var expresionLogica = esExpresionLogica()
+                            if (expresionLogica != null) {
+                                if (tokenActual.categoria == Categoria.AGRUPADOR) {
+                                    obtenerSiguienteToken()
+                                    return BloqueCiclos(expresionLogica, bloqueSentencias)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null
+    }
     /**
      * <ExpresiónLógica>::= <ExpresióRelacional> [Operadorlogicos <ExpresiónLógica>]
      */
@@ -285,7 +327,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 var expresion = esExpresionLogica()
                 return ExpresionLogica(relacional,expresion,operadorLogico)
             }else{
-                obtenerSiguienteToken()
                 return ExpresionLogica(relacional,null,null)
             }
         }else{
@@ -342,10 +383,10 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         if(tokenActual.categoria==Categoria.IDENTIFICADOR){
             var nombre= tokenActual;
             obtenerSiguienteToken()
-            if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+            if(tokenActual.categoria==Categoria.AGRUPADOR){
                 obtenerSiguienteToken()
                 var listaParametros = esListaParametros()
-                if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+                if(tokenActual.categoria==Categoria.AGRUPADOR){
                     obtenerSiguienteToken()
                     if (tokenActual.categoria==Categoria.OPERADOR_FINAL){
                         obtenerSiguienteToken()
@@ -613,12 +654,12 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             if(tokenActual.lexema == "PRT") {
                 var token = tokenActual
                 obtenerSiguienteToken()
-                if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+                if (tokenActual.categoria==Categoria.AGRUPADOR){
                     obtenerSiguienteToken()
                     var aux= esListaCadena()
                     if(aux!= null)
                     {
-                        if (tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION )
+                        if (tokenActual.categoria==Categoria.AGRUPADOR )
                         {
                             obtenerSiguienteToken()
                             if(tokenActual.categoria == Categoria.OPERADOR_FINAL)
@@ -692,9 +733,9 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             if(tokenActual.lexema == "RD"){
                 var aux= tokenActual
                 obtenerSiguienteToken()
-                if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+                if(tokenActual.categoria==Categoria.AGRUPADOR){
                     obtenerSiguienteToken()
-                    if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION) {
+                    if(tokenActual.categoria==Categoria.AGRUPADOR) {
                         obtenerSiguienteToken()
                         var vacia = ArrayList<Parametro>()
                         return FuncionInvocada(aux,vacia)
@@ -716,11 +757,11 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * <Arreglo>::= comillasAbriendo <ListaDatos> comillasCerrando
      */
     fun esArreglo(): Arreglo?{
-        if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION){
+        if(tokenActual.categoria==Categoria.AGRUPADOR){
             obtenerSiguienteToken()
             var listaDatos = esListaDatos()
             if(listaDatos!= null){
-                if(tokenActual.categoria!=Categoria.APERTURA_BLOQUE_AGRUPACION)
+                if(tokenActual.categoria!=Categoria.AGRUPADOR)
                 {
                     reportarError("Falta un punto y coma en la lista de datos")
 
@@ -736,7 +777,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * <Matriz>::= comillasAbriendo<Arreglo> operadorSeparador <Arreglo> comillasCerrando operadorFinal
      */
     fun esMatriz(): Matriz?{
-        if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION) {
+        if(tokenActual.categoria==Categoria.AGRUPADOR) {
             obtenerSiguienteToken()
             var arreglo1 = esArreglo()
             if(arreglo1 != null){
@@ -744,7 +785,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     obtenerSiguienteToken()
                     var arreglo2 = esArreglo()
                     if(arreglo2 != null){
-                        if(tokenActual.categoria == Categoria.APERTURA_BLOQUE_AGRUPACION)
+                        if(tokenActual.categoria == Categoria.AGRUPADOR)
                         {
                             obtenerSiguienteToken()
                             return Matriz(arreglo1, arreglo2)
@@ -772,7 +813,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 obtenerSiguienteToken()
                 dato=esDato(true)
             }else{
-                if(tokenActual.categoria!=Categoria.APERTURA_BLOQUE_AGRUPACION)
+                if(tokenActual.categoria!=Categoria.AGRUPADOR)
                 {
                     reportarError("Falta un punto y coma en la lista de datos")
 
