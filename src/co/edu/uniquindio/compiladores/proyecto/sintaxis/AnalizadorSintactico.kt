@@ -68,7 +68,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 var nombreFuncion= tokenActual
                 obtenerSiguienteToken()
                 var posicionInicial = posicionActual
-                var tipoRetorno = esTipoRetorno()
+                var tipoRetorno = esTipoDato()
 
                 if(tipoRetorno== null) {
                     hacerBT(posicionInicial)
@@ -107,21 +107,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         }
         return null
     }
-
-    /**
-     * <TipoRetorno> ::= int | decimal | etc... (FALTA void )
-     */
-    fun esTipoRetorno(): Token?{
-        if (tokenActual.categoria == Categoria.RESERVADA){
-            if (tokenActual.lexema=="REL"||tokenActual.lexema=="ENT"||tokenActual.lexema=="PAL"||
-                    tokenActual.lexema=="LOGI"){
-                obtenerSiguienteToken()
-                return tokenActual
-            }
-        }
-        return null
-    }
-
     /**
      * <ListaParametros>::=  <parámetro> [ operadorSeparador <ListaParametros>  ]
      */
@@ -214,6 +199,14 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
                         obtenerSiguienteToken()
                         return Sentencia(lectura)
+                    }
+                }
+            }else if (tokenActual.lexema=="RT") {
+                var retorno = esRetorno()
+                if(retorno != null){
+                    if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
+                        obtenerSiguienteToken()
+                        return Sentencia(retorno)
                     }
                 }
             }else {

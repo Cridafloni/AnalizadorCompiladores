@@ -14,6 +14,7 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
                     "REL valor :~ RD\"\"_ " +
                     "WHEN\"@12>:~@5\"<" +
                         "RD\"\"_" +
+                        "RT variable_" +
                     ">" +
                     "DO<" +
                         "PRT\"^Ground control to Major Tom^\"_" +
