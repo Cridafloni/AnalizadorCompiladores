@@ -21,6 +21,9 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
                     "arreglo :~ \"@12;$32~4;^cadena^\"_" +
                     "PAL palabra :~ ^hola mundo^_" +
                 "> " +
+            "> " +
+            "|M| efe ENT \"ENT par\" < " +
+            "PAL holis_" +
             ">")
         lexico.analizar()
         //println(lexico.listaTokens)

@@ -171,6 +171,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         return null
     }
 
+
     /**
      * <ListaSentencia>::= <sentencia> [<ListaSentencia>]
      */
@@ -309,9 +310,10 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         var dato1 = esDato(false)
         if(dato1!=null){
             if(tokenActual.categoria == Categoria.OPERADOR_ARITMETICO){
+                var operadorAritmetico = tokenActual
                 obtenerSiguienteToken()
                 var dato2 = esDato(true)
-                return ExpresionAritmetica(dato1, dato2)
+                return ExpresionAritmetica(dato1,operadorAritmetico ,dato2)
             }
         }
         return null

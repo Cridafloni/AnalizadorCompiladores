@@ -1,7 +1,9 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
-class ExpresionAritmetica (var dato1: Any?, var dato2: Any?){
+import co.edu.uniquindio.compiladores.proyecto.lexico.Token
+
+class ExpresionAritmetica (var dato1: Any?, var operadorAritmetico: Token, var dato2: Any?){
     override fun toString(): String {
-        return "ExpresionAritmetica(dato1=$dato1, dato2=$dato2)"
+        return "ExpresionAritmetica(dato1=$dato1, operadorAritmetico=$operadorAritmetico, dato2=$dato2)"
     }
 }
