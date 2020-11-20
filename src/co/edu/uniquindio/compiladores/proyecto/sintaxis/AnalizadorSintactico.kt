@@ -28,9 +28,8 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * <UnidadDeCompilacion>::= <ListaFunciones>
      */
     fun esUnidadDeCompilacion (): UnidadDeCompilacion?{
-        val listaFunciones: ArrayList<Funcion> = esListaFunciones()
-        //print(listaFunciones)
         val listaVariableGlobal: ArrayList<VariableGlobal> = esListaVariableGlobal()
+        val listaFunciones: ArrayList<Funcion> = esListaFunciones()
         return if(listaFunciones.size>=0){
             UnidadDeCompilacion(listaFunciones, listaVariableGlobal)
         }else null
@@ -497,7 +496,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      *  | <DeclararArreglo> operadorFinal | <DeclararMatriz> operadorFinal
      */
     fun esDeclaracionVariable(): DeclararVariable?{
-        if(tokenActual.categoria==Categoria.RESERVADA) {
+        if(tokenActual.categoria == Categoria.RESERVADA && tokenActual.lexema != "|M|") {
             var constante:Token? = null
             if (tokenActual.lexema == "CONS") {
                 constante = tokenActual
@@ -653,10 +652,16 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     }
 
     /**
-     * <variableGlobal>::= VariableGlobal <DeclararVariable>
+     * <listaVariableGlobales>::= <DeclararVariable> [<listaVariableGlobales>]
      */
     fun esListaVariableGlobal(): ArrayList<VariableGlobal>{
-        return ArrayList()
+        var listaVariableGlobal = ArrayList<VariableGlobal>()
+        var variableGlobal = esDeclaracionVariable()
+        while(variableGlobal != null){
+            listaVariableGlobal.add(VariableGlobal(variableGlobal))
+            variableGlobal = esDeclaracionVariable()
+        }
+        return listaVariableGlobal
     }
     /**
      * <Impresión>::= imprimir comillasAbriendo <ListaCadena> comillasCerrando operadorFinal
