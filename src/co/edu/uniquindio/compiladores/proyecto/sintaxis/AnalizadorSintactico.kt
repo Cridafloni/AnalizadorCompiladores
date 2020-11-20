@@ -432,14 +432,14 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     obtenerSiguienteToken()
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
                         obtenerSiguienteToken()
-                        return DeclararVariable(constante, tipoDato, variable, null, null)
+                        return DeclararVariable(constante, tipoDato, variable, null, null, null)
                     }else if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
                         hacerBT(posicionInicial)
                         var tipoDato = esTipoDato()
                         if (tipoDato != null) {
                             var asignacion = esAsignacion()
                             if(asignacion!=null){
-                                return DeclararVariable(constante, tipoDato, null, asignacion, null)
+                                return DeclararVariable(constante, tipoDato, null, asignacion, null, null)
                             }
                         }
                     }
@@ -447,7 +447,12 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     hacerBT(posicionInicial)
                     var arreglo = esDeclaracionArreglo()
                     if(arreglo != null){
-                        return DeclararVariable(constante, null, null, null, arreglo)
+                        return DeclararVariable(constante, null, null, null, arreglo, null)
+                    }
+                    hacerBT(posicionInicial)
+                    var matriz = esDeclararMatriz()
+                    if(matriz !=null){
+                       return DeclararVariable(constante, null, null, null, null, matriz)
                     }
                 }
             }else{
@@ -462,12 +467,12 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * | <TipoDato> abrirArreglo cerrarArreglo variable operadorAsignacion <Arreglo>
      */
     fun esDeclaracionArreglo(): DeclararArreglo?{
-        var posicionInicial = posicionActual
         var tipoDato = esTipoDato()
         if (tipoDato != null) {
             if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
                 obtenerSiguienteToken()
                 if(tokenActual.categoria == Categoria.ENTERO){
+                    var tamanio = tokenActual
                     obtenerSiguienteToken()
                     if(tokenActual.categoria == Categoria.CERRAR_ARREGLO){
                         obtenerSiguienteToken()
@@ -477,16 +482,15 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                             obtenerSiguienteToken()
                             if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
                                 obtenerSiguienteToken()
-                                return DeclararArreglo(tipoDato, variable, null)
+                                return DeclararArreglo(tipoDato, tamanio, variable, null)
                             }else if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
                                 hacerBT(posicionInicial)
                                 var asignacion = esAsignacion()
                                 if(asignacion !=null){
-                                    return DeclararArreglo(tipoDato, null, asignacion)
+                                    return DeclararArreglo(tipoDato, tamanio, null, asignacion)
                                 }else{
                                     reportarError("La asignación del arreglo es incorrecta")
                                 }
-
                             }
                         }else if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
                         }
@@ -496,6 +500,58 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         }
         return null
     }
+
+    /**
+     * <DeclararMatriz>::= <TipoDato> abrirArreglo numeroEntero operadorSeparador numeroEntero cerrarArreglo  variable
+     * | <TipoDato> abrirArreglo  numeroEntero operadorSeparador numeroEntero cerrarArreglo <Asignacion>
+     */
+    fun esDeclararMatriz(): DeclararMatriz?{
+        var tipoDato = esTipoDato()
+        if (tipoDato != null) {
+            if(tokenActual.categoria == Categoria.ABRIR_ARREGLO) {
+                obtenerSiguienteToken()
+                if (tokenActual.categoria == Categoria.ENTERO) {
+                    var filas = tokenActual
+                    obtenerSiguienteToken()
+                    if (tokenActual.categoria == Categoria.CERRAR_ARREGLO) {
+                        obtenerSiguienteToken()
+                        if(tokenActual.categoria == Categoria.ABRIR_ARREGLO) {
+                            obtenerSiguienteToken()
+                            if (tokenActual.categoria == Categoria.ENTERO) {
+                                var columnas = tokenActual
+                                obtenerSiguienteToken()
+                                if (tokenActual.categoria == Categoria.CERRAR_ARREGLO) {
+                                    obtenerSiguienteToken()
+                                    if(tokenActual.categoria == Categoria.IDENTIFICADOR){
+                                        var variable = tokenActual
+                                        var posicionInicial = posicionActual
+                                        obtenerSiguienteToken()
+                                        if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
+                                            obtenerSiguienteToken()
+                                            return DeclararMatriz(tipoDato, filas, columnas, variable, null)
+                                        }else if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
+                                            hacerBT(posicionInicial)
+                                            var asignacion = esAsignacion()
+                                            if(asignacion !=null){
+                                                return DeclararMatriz(tipoDato, filas, columnas, null, asignacion)
+                                            }else{
+                                                reportarError("La asignación de la matriz es incorrecta")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     * <Asignación>::= variable  operadorAsignacion <Dato> operadorFinal
+     */
     fun esAsignacion():Asignacion?{
         if(tokenActual.categoria == Categoria.IDENTIFICADOR){
             var identificador = tokenActual
@@ -644,6 +700,33 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 }
                 obtenerSiguienteToken()
                 return Arreglo(listaDatos)
+            }
+        }
+        return null
+    }
+
+    /**
+     * <Matriz>::= comillasAbriendo<Arreglo> operadorSeparador <Arreglo> comillasCerrando operadorFinal
+     */
+    fun esMatriz(): Matriz?{
+        if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION) {
+            obtenerSiguienteToken()
+            var arreglo1 = esArreglo()
+            if(arreglo1 != null){
+                if(tokenActual.categoria == Categoria.SEPARADOR){
+                    obtenerSiguienteToken()
+                    var arreglo2 = esArreglo()
+                    if(arreglo2 != null){
+                        if(tokenActual.categoria == Categoria.APERTURA_BLOQUE_AGRUPACION)
+                        {
+                            obtenerSiguienteToken()
+                            return Matriz(arreglo1, arreglo2)
+                        }else{
+                            reportarError("Falta las comillas de Cierre del bloque de agrupación")
+                        }
+
+                    }
+                }
             }
         }
         return null

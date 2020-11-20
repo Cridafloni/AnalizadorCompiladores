@@ -12,19 +12,13 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
                     "CONS ENT variable_ " +
                     "PAL variablo_" +
                     "CONS ENT ¿@5? array :~  \"@12;@23;SIMON\"_" +
-                    "REL ¿@9? arraos_" +
+                    "REL ¿@2?¿@2? matriz :~ \" \"@2;SIMON\" ; \"@3;NELSON\" \"_" +
                 "> <" +
                     "CONS REL variable_ " +
                     "variable :~ @3 &+ @23 &- $3~5 &/ @5_" +
-                    "cadenita :~ ^esto es una cadenita^_" +
-                    "val :~ variab_" +
                     "arreglo :~ \"@12;$32~4;^cadena^\"_" +
-                    "PAL palabra :~ ^hola mundo^_" +
                 "> " +
-            "> " +
-            "|M| efe ENT \"ENT par\" < " +
-            "PAL holis_" +
-            ">")
+            "> ")
         lexico.analizar()
         //println(lexico.listaTokens)
     val sintaxis= AnalizadorSintactico(lexico.listaTokens)
