@@ -15,6 +15,18 @@ class Funcion(var nombreFuncion:Token, var tipoRetorno:Token, var listaParametro
         raiz.children.add(TreeItem("Nombre:${nombreFuncion.lexema}"))
         raiz.children.add(TreeItem("Tipo Retorno:${tipoRetorno.lexema}"))
 
+        var raiz1= TreeItem("Parametros")
+        for (f in listaParametros){
+            raiz1.children.add(f.getArbolVisual())
+
+        }
+        raiz.children.add(raiz1)
+
+        var raiz2= TreeItem("Sentencias")
+        for (f in listaSentencia){
+            raiz2.children.add(f.getArbolVisual())
+
+        }
 
         return raiz
     }

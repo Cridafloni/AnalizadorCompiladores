@@ -33,13 +33,21 @@ class InicioController : Initializable {
             val lexico = AnalizadorLexico(codigo.text)
             lexico.analizar()
             tablaTokens.items = FXCollections.observableArrayList(lexico.listaTokens)
-            //if (lexico.listaErrores.isEmpty{}else{car allertta = Alert(Alert.AlertTipe.War alerta.headerTect="Mesaje")}
+            if (lexico.listaErrores.isEmpty()){
 
-            val sintaxis= AnalizadorSintactico(lexico.listaTokens)
-            val uc= sintaxis.esUnidadDeCompilacion()
-            if(uc!=null){
-                arbolVisual.root= uc.getArbolVisual()
-            }
+                val sintaxis= AnalizadorSintactico(lexico.listaTokens)
+                        val uc= sintaxis.esUnidadDeCompilacion()
+                        if(uc!=null){
+                            arbolVisual.root= uc.getArbolVisual()
+                        }
+
+                    }else{
+                        var alerta = Alert(Alert.AlertType.WARNING)
+                            alerta.headerText="Mensaje"
+                            alerta.contentText= "Existen errores lexicos"
+                        }
+
+
 
             //print(lexico.listaTokens)
 

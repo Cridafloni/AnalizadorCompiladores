@@ -6,11 +6,14 @@ class AnalizadorLexico(var codigoFuente:String) {
 
     var caracterActual  = codigoFuente[0]
     var listaTokens= ArrayList<Token>()
+    var listaErrores = ArrayList<Error>()
     var finCodigo= 0.toChar()
     var filaActual=0
     var columnaActual=0
 
     fun almacenarToken(lexema:String, categoria: Categoria, fila:Int, columna:Int) = listaTokens.add(Token(lexema, categoria, fila, columna))
+
+    fun almacenarError(error:String,fila:Int,columna:Int) = listaErrores.add(Error(error, fila, columna))
 
     fun hacerBT(posicionInicial:Int,filaInicial:Int,columnaInicial:Int){
         posicionActual= posicionInicial

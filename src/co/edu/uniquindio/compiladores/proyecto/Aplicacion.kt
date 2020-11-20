@@ -3,7 +3,6 @@ package co.edu.uniquindio.compiladores.proyecto
 import co.edu.uniquindio.compiladores.proyecto.lexico.AnalizadorLexico
 import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
 
-// Min 32 vid 2
     fun main(){
 
     val lexico= AnalizadorLexico("" +
