@@ -23,7 +23,10 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
                     "variable :~ @3 &+ @23 &- $3~5 &/ @5_" +
                     "arreglo :~ \"@12;$32~4;^cadena^\"_" +
                 "> " +
-            "> ")
+            "> " +
+            "|M| hola  \"ENT par\" < " +
+             "arreglo :~ \"@12;$32~4;^cadena^\"_" +
+            ">")
         lexico.analizar()
         //println(lexico.listaTokens)
     val sintaxis= AnalizadorSintactico(lexico.listaTokens)

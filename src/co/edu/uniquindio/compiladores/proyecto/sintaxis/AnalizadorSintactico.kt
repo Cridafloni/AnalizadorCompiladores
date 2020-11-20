@@ -68,12 +68,12 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             if(tokenActual.categoria== Categoria.IDENTIFICADOR){
                 var nombreFuncion= tokenActual
                 obtenerSiguienteToken()
-
+                var posicionInicial = posicionActual
                 var tipoRetorno = esTipoRetorno()
 
-                if(tipoRetorno!= null){
-                    obtenerSiguienteToken()
-
+                if(tipoRetorno== null) {
+                    hacerBT(posicionInicial)
+                }
                     if(tokenActual.categoria==Categoria.AGRUPADOR)
                     {
                         obtenerSiguienteToken()
@@ -97,9 +97,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     }else{
                         reportarError("Falta abrir la lista de Parametros")
                     }
-                }else{
-                    reportarError("Falta el tipo de retorno de la funcion")
-                }
             }else {
                 reportarError("No es un identificador valido")
             }
@@ -119,6 +116,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         if (tokenActual.categoria == Categoria.RESERVADA){
             if (tokenActual.lexema=="REL"||tokenActual.lexema=="ENT"||tokenActual.lexema=="PAL"||
                     tokenActual.lexema=="LOGI"){
+                obtenerSiguienteToken()
                 return tokenActual
             }
         }
