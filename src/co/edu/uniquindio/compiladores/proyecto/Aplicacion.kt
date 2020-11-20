@@ -11,7 +11,12 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
                 "VI\"@12 >:~ @6 &+ @5 % @1 <:~ @6 \" <" +
                     "PAL palabra :~ ^Esto es una cadena^+variable+^fin^_" +
                     "REL valor :~ RD\"\"_ " +
-                    "funcion\"\"_ " +
+                    "WHEN\"@12>:~@5\"<" +
+                        "RD\"\"_" +
+                    ">" +
+                    "DO<" +
+                        "PRT\"^Ground control to Major Tom^\"_" +
+                    ">WHEN\"@2 &+ @2 >:~ @5\"" +
                     "CONS ENT ¿@5? array :~  \"@12;@23;SIMON\"_" +
                     "REL ¿@2?¿@2? matriz :~ \" \"@2;SIMON\" ; \"@3;NELSON\" \"_" +
                 "> <" +
