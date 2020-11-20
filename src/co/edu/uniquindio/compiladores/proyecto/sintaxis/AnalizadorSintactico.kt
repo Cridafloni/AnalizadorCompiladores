@@ -207,9 +207,18 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             }else if (tokenActual.lexema=="WHEN"||tokenActual.lexema=="DO"){
 
             }else if (tokenActual.lexema=="PRT"){
-
+                var impresion = esImpresion()
+                if(impresion != null){
+                    return Sentencia(impresion)
+                }
             }else if (tokenActual.lexema=="RD") {
-
+                var lectura = esLectura()
+                if(lectura != null){
+                    if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
+                        obtenerSiguienteToken()
+                        return Sentencia(lectura)
+                    }
+                }
             }else {
                 var sentencia = esDeclaracionVariable()
                 if(sentencia!=null){
@@ -217,7 +226,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 }else{
                     reportarError("La sentencia es inválida")
                 }
-
             }
         }else if(tokenActual.categoria == Categoria.IDENTIFICADOR) {
             var sentencia = esAsignacion()
@@ -388,6 +396,17 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         if(arreglo !=null){
             return  Dato(arreglo)
         }
+        hacerBT(posicionInicial)
+        var listaCadena = esListaCadena()
+        if(listaCadena != null){
+            return Dato(listaCadena)
+        }
+        hacerBT(posicionInicial)
+        var lectura = esLectura();
+        if(lectura != null){
+            return Dato(lectura)
+        }
+        hacerBT(posicionInicial)
         var invocacion = esInvocacionFuncion();
         if(invocacion!=null){
             return Dato(invocacion)
@@ -597,10 +616,16 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                             obtenerSiguienteToken()
                             if(tokenActual.categoria == Categoria.OPERADOR_FINAL)
                             {
+                                obtenerSiguienteToken()
                                 return Impresion(aux)
                             }
+                        }else{
+                            reportarError("Falta cerrar el bloque de agrupación del PRT")
                         }
+                    }else{
+                        reportarError("Se necesita una cadena para imprimir")
                     }
+
                 }
             }
 
@@ -664,13 +689,8 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     obtenerSiguienteToken()
                     if(tokenActual.categoria==Categoria.APERTURA_BLOQUE_AGRUPACION) {
                         obtenerSiguienteToken()
-                        if(tokenActual.categoria== Categoria.OPERADOR_FINAL)
-                        {
-                            var vacia = ArrayList<Parametro>()
-                            return FuncionInvocada(aux,vacia)
-                        }else{
-                            reportarError("Falta operador Final")
-                        }
+                        var vacia = ArrayList<Parametro>()
+                        return FuncionInvocada(aux,vacia)
                     }else{
                         reportarError("Falta cierre de agrupacion")
                     }

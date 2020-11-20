@@ -1003,7 +1003,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             lexema += caracterActual
             obtenerSiguienteCaracter()
 
-            almacenarToken(lexema,Categoria.SEPARADOR,filaInicial,columnaInicial)
+            almacenarToken(lexema,Categoria.CONCATENACION,filaInicial,columnaInicial)
             return true
         }
         return false
