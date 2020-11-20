@@ -37,6 +37,7 @@ class AnalizadorLexico(var codigoFuente:String) {
             if(esTipoReal())continue
             if(esCiclo()) continue
             if(esCondicional()) continue
+            if(esRetorno())continue
 
             //Tipos de datos
             if(esConstante())continue
@@ -101,6 +102,30 @@ class AnalizadorLexico(var codigoFuente:String) {
             obtenerSiguienteCaracter()
 
             if(caracterActual != 'I'){
+                return false
+            }
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+            almacenarToken(lexema,Categoria.RESERVADA,filaInicial,columnaInicial)
+
+            return true
+        }
+        return false
+    }
+
+
+    fun esRetorno():Boolean{
+        if (caracterActual == 'R'){
+            var lexema = ""
+            var filaInicial = filaActual
+            var columnaInicial = columnaActual
+            var posicionInicial = posicionActual
+
+            lexema += caracterActual
+            obtenerSiguienteCaracter()
+
+            if(caracterActual != 'T'){
+                hacerBT(posicionInicial,filaInicial,columnaInicial)
                 return false
             }
             lexema += caracterActual

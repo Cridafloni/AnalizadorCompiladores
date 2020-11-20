@@ -1,6 +1,8 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
 import co.edu.uniquindio.compiladores.proyecto.lexico.Token
+import javafx.scene.control.TreeItem
+import sun.reflect.generics.tree.Tree
 
 class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variable: Token?, var asignacion: Asignacion?, var declararArreglo: DeclararArreglo?,
                         var declararMatriz: DeclararMatriz?) : Sentencia(null){
@@ -21,4 +23,29 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
         return "DeclararVariable("+cons+"tipoDato=$tipoDato, asignacion=$asignacion)"
 
     }
+
+    override fun getArbolVisual(): TreeItem<String> {
+        var raiz = TreeItem("Decision")
+
+        if (constante != null) {
+            raiz.children.add(TreeItem("Constante: ${constante!!.lexema}"))
+        }
+        if (tipoDato != null) {
+            raiz.children.add(TreeItem("Tipo Dato: ${tipoDato!!.lexema}"))
+        }
+        if (variable != null) {
+            raiz.children.add(TreeItem("Tipo Dato: ${variable!!.lexema}"))
+        }
+        if (asignacion != null) {
+            raiz.children.add(asignacion!!.getArbolVisual())
+        }
+        if (declararArreglo != null) {
+            raiz.children.add(declararArreglo!!.getArbolVisual())
+        }
+        if (declararMatriz != null) {
+            raiz.children.add(declararMatriz!!.getArbolVisual())
+        }
+        return raiz
+    }
+
 }

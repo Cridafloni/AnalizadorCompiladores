@@ -434,6 +434,21 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         return null
     }
 
+    fun esRetorno():Retorno?{
+        if (tokenActual.lexema=="RT" && tokenActual.categoria==Categoria.RESERVADA){
+            obtenerSiguienteToken()
+
+            var dato = esDato(true)
+            if (dato!= null){
+                return Retorno(dato)
+            }
+            else{
+                reportarError("El obligariorio el tipo de retorno")
+            }
+        }
+        return null
+    }
+
     /**
      * <Dato> ::=  numeroEntero | numeroReal | <ListaCadena>|  logicos
      * | <Arreglo> | <ExpresiónAritmética> | <Matriz> | <InvocacionFuncion>| variable
