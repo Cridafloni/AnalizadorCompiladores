@@ -229,7 +229,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             }
         }else if(tokenActual.categoria == Categoria.IDENTIFICADOR) {
             var posicionInicial = posicionActual
-            var sentencia:Any? = esAsignacion()
+            var sentencia:Sentencia? = esAsignacion()
             if (sentencia != null) {
                 return Sentencia(sentencia)
             }
@@ -483,7 +483,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      *  | <TipoDato>  variable operadorAsignacion <Dato> operadorFinal
      *  | <DeclararArreglo> operadorFinal | <DeclararMatriz> operadorFinal
      */
-    fun esDeclaracionVariable(): Any?{
+    fun esDeclaracionVariable(): DeclararVariable?{
         if(tokenActual.categoria==Categoria.RESERVADA) {
             var constante:Token? = null
             if (tokenActual.lexema == "CONS") {
