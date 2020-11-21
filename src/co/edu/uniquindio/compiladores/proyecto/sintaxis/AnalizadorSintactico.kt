@@ -30,9 +30,16 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     fun esUnidadDeCompilacion (): UnidadDeCompilacion?{
         val listaVariableGlobal: ArrayList<VariableGlobal> = esListaVariableGlobal()
         val listaFunciones: ArrayList<Funcion> = esListaFunciones()
-        return if(listaFunciones.size>=0 && listaVariableGlobal.size>=0){
-            UnidadDeCompilacion(listaFunciones, listaVariableGlobal)
-        }else null
+        if(listaFunciones.size>0 ){
+            if(tokenActual.categoria== Categoria.CIERRE_BLOQUE_SENTENCIA)
+            {
+                return  UnidadDeCompilacion(listaFunciones, listaVariableGlobal)
+            }else{
+                reportarError("Sintaxis invalida función esperada")
+            }
+
+        }
+        return null
 
     }
 
