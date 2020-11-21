@@ -534,6 +534,8 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                                 return DeclararVariable(constante, tipoDato, null, asignacion, null, null)
                             }
                         }
+                    }else{
+                        reportarError("Falta operador de finalización")
                     }
                 }else if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
                     hacerBT(posicionInicial)
@@ -583,10 +585,15 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                                 }else{
                                     reportarError("La asignación del arreglo es incorrecta")
                                 }
+                            }else{
+                                reportarError("Falta operacdor final.")
                             }
-                        }else if(tokenActual.categoria == Categoria.ABRIR_ARREGLO){
                         }
+                    }else{
+                        reportarError("Se debe cerrar el operador de arreglo.")
                     }
+                }else{
+                    reportarError("La longitud del arreglo debe ser Entero.")
                 }
             }
         }
@@ -629,12 +636,20 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                                             }else{
                                                 reportarError("La asignación de la matriz es incorrecta")
                                             }
+                                        }else{
+                                            reportarError("Falta operacdor final.")
                                         }
+                                    }else{
+                                        reportarError("Falta el identificador de la matriz.")
                                     }
                                 }
+                            }else{
+                                reportarError("La cantidad de columnas de la matriz debe ser Entero.")
                             }
                         }
                     }
+                }else{
+                    reportarError("La cantidad de filas de la matriz debe ser Entero.")
                 }
             }
         }
@@ -655,6 +670,8 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
                         obtenerSiguienteToken()
                         return Asignacion(identificador, dato)
+                    }else{
+                        reportarError("Falta el operador final.")
                     }
                 }else{
                     reportarError("La asignación debe tener un dato")
