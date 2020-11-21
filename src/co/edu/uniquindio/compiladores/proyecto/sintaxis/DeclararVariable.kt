@@ -2,7 +2,6 @@ package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
 import co.edu.uniquindio.compiladores.proyecto.lexico.Token
 import javafx.scene.control.TreeItem
-import sun.reflect.generics.tree.Tree
 
 class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variable: Token?, var asignacion: Asignacion?, var declararArreglo: DeclararArreglo?,
                         var declararMatriz: DeclararMatriz?) : Sentencia(null){

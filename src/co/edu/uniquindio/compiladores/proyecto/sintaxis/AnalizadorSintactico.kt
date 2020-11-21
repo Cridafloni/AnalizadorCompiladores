@@ -251,10 +251,14 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                         }else{
                             reportarError("El bloque de sentencias está vacío")
                         }
+                    }else {
+                        reportarError("Falta cierre de agrupador")
                     }
                 }else{
                     reportarError("Expresión lógica inválida")
                 }
+            }else {
+                reportarError("Falta apertura de agrupador")
             }
         }
 
@@ -275,9 +279,16 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                             if(bloqueSentencias != null){
                                 return BloqueCiclos(expresionLogica, bloqueSentencias)
                             }
+                        }else {
+                            reportarError("Falta cierre de agrupador")
                         }
+                    }else{
+                        reportarError("Expresión lógica inválida")
                     }
+                }else {
+                    reportarError("Falta apertura de agrupador")
                 }
+
             }else if(tokenActual.lexema=="DO"){
                 obtenerSiguienteToken()
                 var bloqueSentencias = esBloqueSentencias()
@@ -291,8 +302,14 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                                 if (tokenActual.categoria == Categoria.AGRUPADOR) {
                                     obtenerSiguienteToken()
                                     return BloqueCiclos(expresionLogica, bloqueSentencias)
+                                }else {
+                                    reportarError("Falta cierre de agrupador")
                                 }
+                            }else{
+                                reportarError("Expresión lógica inválida")
                             }
+                        }else {
+                            reportarError("Falta apertura de agrupador")
                         }
                     }
                 }
@@ -380,7 +397,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                         reportarError("Falta operador final")
                     }
                 }else{
-                    reportarError("Falta cerrar el bloque")
+                    reportarError("Falta cierre de agrupacion")
                 }
             }
         }
@@ -414,6 +431,8 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     tipo.lexema=="LOGI"){
                 obtenerSiguienteToken()
                 return tipo
+            }else {
+                reportarError("El tipo de dato no es valido")
             }
         }
         return null
@@ -686,6 +705,8 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                         reportarError("Se necesita una cadena para imprimir")
                     }
 
+                }else {
+                    reportarError("Falta abrir el bloque de agrupación del PRT")
                 }
             }
 
