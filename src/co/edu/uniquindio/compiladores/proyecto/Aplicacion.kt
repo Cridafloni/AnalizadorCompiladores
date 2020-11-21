@@ -10,7 +10,7 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
             "ENT plobal :~ @5_" +
             "|M| funcion ENT \"ENT par\" < " +
                 "VI\"@12 >:~ @6 &+ @5 % @1 <:~ @6 \" <" +
-                    "PAL palabra :~ ^Esto es una cadena^+variable+^fin^_" +
+                    "PAL palabra :~ gola\"\"_" +
                     "REL valor :~ RD\"\"_ " +
                     "WHEN\"@12>:~@5\"<" +
                         "RD\"\"_" +

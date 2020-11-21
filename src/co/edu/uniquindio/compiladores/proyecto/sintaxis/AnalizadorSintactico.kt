@@ -221,7 +221,12 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             hacerBT(posicionInicial)
             sentencia = esInvocacionFuncion()
             if(sentencia != null){
-                return Sentencia(sentencia)
+                if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
+                    obtenerSiguienteToken()
+                    return Sentencia(sentencia)
+                }else{
+                    reportarError("Falta el operador final en la invocación del método.")
+                }
             }
 
         }
@@ -390,12 +395,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 var listaParametros = esListaParametros()
                 if(tokenActual.categoria==Categoria.AGRUPADOR){
                     obtenerSiguienteToken()
-                    if (tokenActual.categoria==Categoria.OPERADOR_FINAL){
-                        obtenerSiguienteToken()
                         return FuncionInvocada(nombre,listaParametros)
-                    }else{
-                        reportarError("Falta operador final")
-                    }
                 }else{
                     reportarError("Falta cierre de agrupacion")
                 }
