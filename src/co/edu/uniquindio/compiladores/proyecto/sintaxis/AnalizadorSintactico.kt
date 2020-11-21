@@ -323,18 +323,23 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         return null
     }
     /**
-     * <ExpresiónLógica>::= <ExpresióRelacional> [Operadorlogicos <ExpresiónLógica>]
+     * <ExpresiónLógica>::= [negacion]<ExpresióRelacional> [Operadorlogicos <ExpresiónLógica>]
      */
     fun esExpresionLogica(): ExpresionLogica?{
+        var operadorNegacion:Token? = null
+        if(tokenActual.lexema == "~"){
+            operadorNegacion = tokenActual
+            obtenerSiguienteToken()
+        }
         var relacional = esExpresionRelacional()
         if (relacional!=null){
             if(tokenActual.categoria==Categoria.OPERADOR_LOGICO){
                 var operadorLogico= tokenActual
                 obtenerSiguienteToken()
                 var expresion = esExpresionLogica()
-                return ExpresionLogica(relacional,expresion,operadorLogico)
+                return ExpresionLogica(operadorNegacion,relacional,expresion,operadorLogico)
             }else{
-                return ExpresionLogica(relacional,null,null)
+                return ExpresionLogica(operadorNegacion,relacional,null,null)
             }
         }else{
             reportarError("Expresion relacional no valida")

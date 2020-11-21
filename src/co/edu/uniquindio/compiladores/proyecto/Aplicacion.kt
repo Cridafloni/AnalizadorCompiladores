@@ -9,7 +9,7 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
             "REL global :~ $12~5_" +
             "ENT plobal :~ @5_" +
             "|M| funcion ENT \"ENT par\" < " +
-                "VI\"@12 >:~ @6 &+ @5 % @1 <:~ @6 \" <" +
+                "VI\"~@12 >:~ @6 &+ @5 % @1 <:~ @6 \" <" +
                     "PAL palabra :~ gola\"\"_" +
                     "REL valor :~ RD\"\"_ " +
                     "WHEN\"@12>:~@5\"<" +
