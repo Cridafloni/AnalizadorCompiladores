@@ -11,7 +11,6 @@ class Dato (var dato: Any) {
 
     fun getArbolVisual(): TreeItem<String>? {
         if (dato is Token){
-
             return  TreeItem("Dato: ${(dato as Token).lexema}")
         }
         else{
@@ -25,7 +24,6 @@ class Dato (var dato: Any) {
                 return  (dato as Matriz).getArbolVisual()
             }
             if(dato is FuncionInvocada){
-                println("Entre")
                 return  (dato as FuncionInvocada).getArbolVisual()
             }else{
                 var raiz= TreeItem("Lista Cadenas")
