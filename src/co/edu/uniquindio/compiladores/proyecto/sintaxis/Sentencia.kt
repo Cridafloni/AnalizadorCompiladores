@@ -7,10 +7,10 @@ import javafx.scene.control.TreeItem
 open class Sentencia (var sentencia: Sentencia?) {
 
    open fun getArbolVisual(): TreeItem<String> {
-
+        //println("Estuve aqui :3 ")
         var raiz= TreeItem("Sentencia")
-       // raiz.children.add(TreeItem("Sentencia:${sentencia}"))
-
+        raiz.children.add(sentencia!!.getArbolVisual())
+        //println(sentencia)
         return raiz
     }
 

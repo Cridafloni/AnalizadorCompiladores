@@ -11,12 +11,12 @@ class Arreglo (var listaDatos: ArrayList<Dato>){
 
         var raiz= TreeItem<String>("Datos")
 
-        var raiz1= TreeItem("Datos")
+
         for (f in listaDatos){
-            raiz1.children.add(f.getArbolVisual())
+            raiz.children.add(f.getArbolVisual())
 
         }
-        raiz.children.add(raiz1)
+
 
         return raiz
     }

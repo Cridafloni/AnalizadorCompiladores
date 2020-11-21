@@ -28,6 +28,7 @@ class Funcion(var nombreFuncion:Token, var tipoRetorno:Token?, var listaParametr
             raiz2.children.add(f.getArbolVisual())
 
         }
+        raiz.children.add(raiz2)
         return raiz
     }
 }

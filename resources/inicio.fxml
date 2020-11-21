@@ -16,7 +16,7 @@
         </columns>
       </TableView>
       <TreeView fx:id="arbolVisual" layoutX="608.0" layoutY="54.0" prefHeight="599.0" prefWidth="466.0" />
-      <TextArea layoutX="14.0" layoutY="489.0" prefHeight="164.0" prefWidth="577.0" />
+      <TextArea fx:id="errores" layoutX="14.0" layoutY="489.0" prefHeight="164.0" prefWidth="577.0" />
       <Label layoutX="15.0" layoutY="464.0" prefHeight="17.0" prefWidth="76.0" text="Errores:" />
    </children>
 </AnchorPane>

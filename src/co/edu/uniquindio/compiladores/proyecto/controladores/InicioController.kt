@@ -13,6 +13,7 @@ import javafx.scene.control.*
 import javafx.scene.control.cell.PropertyValueFactory
 import java.net.URL
 import java.util.*
+import kotlin.math.sin
 
 class InicioController : Initializable {
 
@@ -26,10 +27,13 @@ class InicioController : Initializable {
 
     @FXML lateinit var arbolVisual:TreeView<String>
 
+    @FXML lateinit var errores: TextArea
+
     @FXML
     fun analizarCodigo( e: ActionEvent){
         tablaTokens.items = null
         if(codigo.text.length>0) {
+            //println(codigo.text)
             val lexico = AnalizadorLexico(codigo.text)
             lexico.analizar()
             tablaTokens.items = FXCollections.observableArrayList(lexico.listaTokens)
@@ -37,7 +41,16 @@ class InicioController : Initializable {
 
                 val sintaxis= AnalizadorSintactico(lexico.listaTokens)
                 val uc= sintaxis.esUnidadDeCompilacion()
-                print(uc)
+
+                val errores1= sintaxis.listaErrores
+                var reporte =""
+                for(f in errores1){
+                    reporte+= f.toString()
+                    reporte+= "\n"
+                }
+                //print(errores1)
+                errores.setText(reporte)
+
                         if(uc!=null){
                             arbolVisual.root= uc.getArbolVisual()
                         }

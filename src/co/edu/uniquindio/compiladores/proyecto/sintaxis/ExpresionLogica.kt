@@ -9,7 +9,7 @@ class ExpresionLogica(var expresionRelacional: ExpresionRelacional, var expresio
     }
 
     fun getArbolVisual(): TreeItem<String> {
-        var raiz= TreeItem("Expresion")
+        var raiz= TreeItem("Expresion Logica")
 
         raiz.children.add(expresionRelacional.getArbolVisual())
 

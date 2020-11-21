@@ -10,7 +10,7 @@ class FuncionInvocada (var nombreFuncion: Token,var listaParametros:ArrayList<Pa
 
     override fun getArbolVisual(): TreeItem<String> {
 
-        var raiz= TreeItem<String>("Impresion")
+        var raiz= TreeItem<String>("Invocación")
 
         raiz.children.add(TreeItem("Nombre Función : ${nombreFuncion.lexema}"))
 

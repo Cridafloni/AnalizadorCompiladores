@@ -12,11 +12,11 @@ class DeclararMatriz  (var tipoDato: Token, var filas: Token, var columnas: Toke
     }
     fun getArbolVisual(): TreeItem<String> {
 
-        var raiz= TreeItem<String>("Declaración Arreglo")
+        var raiz= TreeItem<String>("Declaración Matriz")
 
         raiz.children.add(TreeItem("Tipo Dato: ${tipoDato.lexema}"))
-        raiz.children.add(TreeItem("Tamaño: ${filas.lexema}"))
-        raiz.children.add(TreeItem("Tamaño: ${columnas.lexema}"))
+        raiz.children.add(TreeItem("Tamaño Filas: ${filas.lexema}"))
+        raiz.children.add(TreeItem("Tamaño Columas: ${columnas.lexema}"))
 
         if(variable!=null){
             raiz.children.add(TreeItem("Tamaño: ${variable!!.lexema}"))

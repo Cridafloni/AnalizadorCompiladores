@@ -445,9 +445,15 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             return  Dato(arreglo)
         }
         hacerBT(posicionInicial)
-        var listaCadena = esListaCadena()
-        if(listaCadena != null){
-            return Dato(listaCadena)
+        if (tokenActual.categoria==Categoria.CADENA_CARACTER) {
+            obtenerSiguienteToken()
+            if (tokenActual.categoria == Categoria.CONCATENACION) {
+                hacerBT(posicionInicial)
+                var listaCadena = esListaCadena()
+                if (listaCadena != null) {
+                    return Dato(listaCadena)
+                }
+            }
         }
         hacerBT(posicionInicial)
         var lectura = esLectura();
