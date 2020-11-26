@@ -6,7 +6,7 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
     fun main(){
 
     val lexico= AnalizadorLexico("" +
-            "REL global :~ $12~5_" +
+            "REL global :~ invocar\"@32;@5\"_" +
             "LOGI plobal :~ @5>:~@7_" +
              "|M| funcion ENT \"ENT par\" < " +
                 "VI\"~@12 >:~ @6 &+ @5 % @1 <:~ @6 \" <" +
@@ -28,7 +28,9 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
                 "> " +
             "> " +
             "|M| hola  \"ENT par\" < " +
-             "arreglo :~ \"@12;$32~4;^cadena^\"_" +
+                "arreglo :~ \"@12;$32~4;^cadena^\"_" +
+                "ll :~ invoca\"\"@23\";@4\"_" +
+                "palab :~ @4_" +
             ">"
             )
 

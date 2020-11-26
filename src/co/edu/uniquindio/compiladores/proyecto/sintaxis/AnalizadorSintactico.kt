@@ -368,8 +368,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     reportarError("Componente 2 no valido")
                 }
             }
-        }else{
-            reportarError("Componente 1 no valido")
         }
         return null
     }
@@ -391,7 +389,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     }
 
     /**
-     * <InvocacionFuncion>::= identificador comillasAbriendo [<ListaParametros>]
+     * <InvocacionFuncion>::= identificador comillasAbriendo [<ListaDatos>]
      *                          comillasCerrando operadorFinal
      */
     fun esInvocacionFuncion(): FuncionInvocada ?{
@@ -400,12 +398,14 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             obtenerSiguienteToken()
             if(tokenActual.categoria==Categoria.AGRUPADOR){
                 obtenerSiguienteToken()
-                var listaParametros = esListaParametros()
-                if(tokenActual.categoria==Categoria.AGRUPADOR){
-                    obtenerSiguienteToken()
-                        return FuncionInvocada(nombre,listaParametros)
-                }else{
-                    reportarError("Falta cierre de agrupacion")
+                var listaDatos = esListaDatos()
+                if(listaDatos != null){
+                    if(tokenActual.categoria==Categoria.AGRUPADOR){
+                        obtenerSiguienteToken()
+                        return FuncionInvocada(nombre,listaDatos)
+                    }else{
+                        reportarError("Falta cierre de agrupación")
+                    }
                 }
             }
         }
@@ -515,7 +515,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             obtenerSiguienteToken()
             return Dato(dato)
         }
-
         return null
     }
 
@@ -803,7 +802,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                     obtenerSiguienteToken()
                     if(tokenActual.categoria==Categoria.AGRUPADOR) {
                         obtenerSiguienteToken()
-                        var vacia = ArrayList<Parametro>()
+                        var vacia = ArrayList<Dato>()
                         return FuncionInvocada(aux,vacia)
                     }else{
                         reportarError("Falta cierre de agrupacion")
@@ -827,7 +826,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             obtenerSiguienteToken()
             var listaDatos = esListaDatos()
             if(listaDatos!= null){
-                if(tokenActual.categoria!=Categoria.AGRUPADOR)
+                if(tokenActual.categoria!=Categoria.AGRUPADOR && listaDatos.isNotEmpty())
                 {
                     reportarError("Falta un punto y coma en la lista de datos")
 
@@ -868,13 +867,11 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     /**
      * <ListaDatos>::= <Dato> [operadorSeparador<ListaDatos>]
      */
-    private fun esListaDatos(): ArrayList<Dato> {
+    private fun esListaDatos(): ArrayList<Dato>? {
         var listaDatos= ArrayList<Dato>()
         var dato = esDato(true, true)
-
         while (dato!=null){
             listaDatos.add(dato)
-
             if(tokenActual.lexema==";"&& tokenActual.categoria==Categoria.SEPARADOR){
                 obtenerSiguienteToken()
                 dato=esDato(true, true)
@@ -887,6 +884,11 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 break
             }
         }
+        if(tokenActual.categoria != Categoria.AGRUPADOR){
+            return null
+
+        }
+
         return listaDatos
 
 
