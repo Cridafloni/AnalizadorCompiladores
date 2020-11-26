@@ -348,8 +348,6 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             }else{
                 return ExpresionLogica(operadorNegacion,relacional,null,null)
             }
-        }else{
-            reportarError("Expresion relacional no valida")
         }
         return null
     }
@@ -358,19 +356,17 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * <ExpresiónRelacional>::= <Dato> operadorRelacional <Dato>
      */
     fun esExpresionRelacional(): ExpresionRelacional? {
-        var componente1= esDato(true)
+        var componente1= esDato(true, false)
         if(componente1!=null){
             if(tokenActual.categoria==Categoria.OPERADOR_RELACIONAL){
                 var operadorRelacional = tokenActual
                 obtenerSiguienteToken()
-                var componente2= esDato(true)
+                var componente2= esDato(true, false)
                 if(componente2!=null){
                     return ExpresionRelacional(componente1, operadorRelacional, componente2)
                 }else{
                     reportarError("Componente 2 no valido")
                 }
-            }else{
-                reportarError("Se necesita operador relacional válido")
             }
         }else{
             reportarError("Componente 1 no valido")
@@ -382,12 +378,12 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      * <ExpresiónAritmética>::= <Dato> operadorAritmético <Dato> [operadorAritmético  <Dato>]
      */
     fun esExpresionAritmetica(): ExpresionAritmetica?{
-        var dato1 = esDato(false)
+        var dato1 = esDato(false, false)
         if(dato1!=null){
             if(tokenActual.categoria == Categoria.OPERADOR_ARITMETICO){
                 var operadorAritmetico = tokenActual
                 obtenerSiguienteToken()
-                var dato2 = esDato(true)
+                var dato2 = esDato(true, false)
                 return ExpresionAritmetica(dato1,operadorAritmetico ,dato2)
             }
         }
@@ -454,7 +450,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
         if (tokenActual.lexema=="RT" && tokenActual.categoria==Categoria.RESERVADA){
             obtenerSiguienteToken()
 
-            var dato = esDato(true)
+            var dato = esDato(true, true)
             if (dato!= null){
                 return Retorno(dato)
             }
@@ -468,8 +464,9 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
     /**
      * <Dato> ::=  numeroEntero | numeroReal | <ListaCadena>|  logicos
      * | <Arreglo> | <ExpresiónAritmética> | <Matriz> | <InvocacionFuncion>| variable
+     * |<ExpresionLogica>
      */
-    fun esDato(expresionAritmetica: Boolean):Dato?{
+    fun esDato(expresionAritmetica: Boolean, expresionLogica: Boolean):Dato?{
         var posicionInicial = posicionActual
         var arreglo = esArreglo()
         if(arreglo !=null){
@@ -501,6 +498,13 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             var expresion = esExpresionAritmetica()
             if(expresion!=null){
                 return Dato(expresion)
+            }
+        }
+        if(expresionLogica){
+            hacerBT(posicionInicial)
+            var expresionLogica = esExpresionLogica();
+            if(expresionLogica!=null){
+                return Dato(expresionLogica)
             }
         }
         hacerBT(posicionInicial)
@@ -677,7 +681,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             obtenerSiguienteToken()
             if(tokenActual.categoria == Categoria.OPERADOR_ASIGNACION){
                 obtenerSiguienteToken()
-                var dato = esDato(true)
+                var dato = esDato(true, true)
                 if(dato!=null){
                     if(tokenActual.categoria == Categoria.OPERADOR_FINAL){
                         obtenerSiguienteToken()
@@ -866,14 +870,14 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      */
     private fun esListaDatos(): ArrayList<Dato> {
         var listaDatos= ArrayList<Dato>()
-        var dato = esDato(true)
+        var dato = esDato(true, true)
 
         while (dato!=null){
             listaDatos.add(dato)
 
             if(tokenActual.lexema==";"&& tokenActual.categoria==Categoria.SEPARADOR){
                 obtenerSiguienteToken()
-                dato=esDato(true)
+                dato=esDato(true, true)
             }else{
                 if(tokenActual.categoria!=Categoria.AGRUPADOR)
                 {

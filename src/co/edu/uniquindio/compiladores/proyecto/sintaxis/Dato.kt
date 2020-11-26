@@ -17,6 +17,9 @@ class Dato (var dato: Any) {
             if(dato is  ExpresionAritmetica){
                 return  (dato as ExpresionAritmetica).getArbolVisual()
             }
+            if(dato is  ExpresionLogica){
+                return  (dato as ExpresionLogica).getArbolVisual()
+            }
             if (dato is Arreglo){
                 return  (dato as Arreglo).getArbolVisual()
             }

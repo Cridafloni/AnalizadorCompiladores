@@ -7,12 +7,12 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
 
     val lexico= AnalizadorLexico("" +
             "REL global :~ $12~5_" +
-            "ENT plobal :~ @5_" +
-            "|M| funcion ENT \"ENT par\" < " +
+            "LOGI plobal :~ @5>:~@7_" +
+             "|M| funcion ENT \"ENT par\" < " +
                 "VI\"~@12 >:~ @6 &+ @5 % @1 <:~ @6 \" <" +
                     "PAL palabra :~ gola\"\"_" +
                     "REL valor :~ RD\"\"_ " +
-                    "WHEN\"@12>:~@5\"<" +
+                    "WHEN\"$3~5 ¬:~ $5~5\"<" +
                         "RD\"\"_" +
                         "RT variable_" +
                     ">" +
@@ -29,7 +29,9 @@ import co.edu.uniquindio.compiladores.proyecto.sintaxis.AnalizadorSintactico
             "> " +
             "|M| hola  \"ENT par\" < " +
              "arreglo :~ \"@12;$32~4;^cadena^\"_" +
-            ">")
+            ">"
+            )
+
         lexico.analizar()
         //println(lexico.listaTokens)
     val sintaxis= AnalizadorSintactico(lexico.listaTokens)
