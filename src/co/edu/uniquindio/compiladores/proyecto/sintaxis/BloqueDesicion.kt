@@ -1,5 +1,7 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
 class BloqueDesicion (var expresionLogica: ExpresionLogica, var bloqueSentencia: ArrayList<Sentencia>, var bloqueSentencia2: ArrayList<Sentencia>?): Sentencia(null) {
@@ -33,4 +35,14 @@ class BloqueDesicion (var expresionLogica: ExpresionLogica, var bloqueSentencia:
 
     }
 
+    override fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        for(s in bloqueSentencia){
+            s.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, ambito)
+        }
+        if(bloqueSentencia2!=null){
+            for (s in bloqueSentencia2!!){
+                s.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, ambito)
+            }
+        }
+    }
 }

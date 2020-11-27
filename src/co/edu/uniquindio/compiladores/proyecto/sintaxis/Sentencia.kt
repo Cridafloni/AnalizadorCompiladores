@@ -1,6 +1,8 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
 import co.edu.uniquindio.compiladores.proyecto.lexico.Categoria
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
 
@@ -17,6 +19,10 @@ open class Sentencia (var sentencia: Sentencia?) {
 
     override fun toString(): String {
         return "Sentencia(sentencia=$sentencia)"
+    }
+
+    open fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+
     }
 
 }

@@ -1,5 +1,7 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
 class UnidadDeCompilacion (var listaFunciones: ArrayList<Funcion>, var listaVariablesGlobales: ArrayList<VariableGlobal>) {
@@ -22,5 +24,22 @@ class UnidadDeCompilacion (var listaFunciones: ArrayList<Funcion>, var listaVari
 
     override fun toString(): String {
         return "UnidadDeCompilacion(listaFunciones=$listaFunciones, listaVariablesGlobales=$listaVariablesGlobales)"
+    }
+
+    fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>) {
+
+        for(f in listaFunciones){
+            f.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, "Unidad de Compilación")
+        }
+
+        for(f in listaVariablesGlobales){
+            f.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos)
+        }
+    }
+
+    fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>) {
+        /**implementar esta fase en un futuro
+         *
+         */
     }
 }

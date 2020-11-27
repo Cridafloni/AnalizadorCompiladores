@@ -1,6 +1,8 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
 import co.edu.uniquindio.compiladores.proyecto.lexico.Token
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
 class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variable: Token?, var asignacion: Asignacion?, var declararArreglo: DeclararArreglo?,
@@ -47,4 +49,9 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
         return raiz
     }
 
+    override fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        /**
+         * Seria hacer lo de el arbol visual y llamando los diferentes declarar
+         */
+    }
 }

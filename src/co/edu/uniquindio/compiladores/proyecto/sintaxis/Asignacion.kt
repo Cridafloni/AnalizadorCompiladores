@@ -1,6 +1,8 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
 import co.edu.uniquindio.compiladores.proyecto.lexico.Token
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
 class Asignacion (var identificador: Token, var dato: Dato): Sentencia(null) {
@@ -15,5 +17,4 @@ class Asignacion (var identificador: Token, var dato: Dato): Sentencia(null) {
         raiz.children.add(dato.getArbolVisual())
         return raiz
     }
-
 }

@@ -1,5 +1,7 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
 class VariableGlobal(var variableGlobal:DeclararVariable) {
@@ -12,5 +14,9 @@ class VariableGlobal(var variableGlobal:DeclararVariable) {
         raiz.children.add(variableGlobal.getArbolVisual())
 
         return raiz
+    }
+
+    fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>) {
+
     }
 }
