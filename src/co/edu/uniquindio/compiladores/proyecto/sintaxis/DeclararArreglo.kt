@@ -27,4 +27,6 @@ class DeclararArreglo (var tipoDato: Token,var tamanio:Token , var variable: Tok
 
         return raiz
     }
+
+
 }

@@ -21,4 +21,5 @@ class Matriz (var arreglo1: Arreglo, var arreglo2: Arreglo) {
 
         return raiz
     }
+
 }

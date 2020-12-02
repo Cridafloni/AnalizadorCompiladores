@@ -55,4 +55,10 @@ class Funcion(var nombreFuncion:Token, var tipoRetorno:Token?, var listaParametr
             s.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, nombreFuncion.lexema)
         }
     }
+
+    fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>){
+        for(s in listaSentencia){
+            s.analizarSemantica(tablaSimbolos, erroresSemanticos, nombreFuncion.lexema)
+        }
+    }
 }

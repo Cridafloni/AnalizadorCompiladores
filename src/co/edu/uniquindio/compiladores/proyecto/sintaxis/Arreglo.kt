@@ -21,4 +21,6 @@ class Arreglo (var listaDatos: ArrayList<Dato>){
         return raiz
     }
 
+    
+
 }

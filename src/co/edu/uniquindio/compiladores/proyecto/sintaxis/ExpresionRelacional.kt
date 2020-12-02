@@ -20,4 +20,5 @@ class ExpresionRelacional (var componente1: Dato, var operadorRelacional: Token,
         return raiz
 
     }
+
 }

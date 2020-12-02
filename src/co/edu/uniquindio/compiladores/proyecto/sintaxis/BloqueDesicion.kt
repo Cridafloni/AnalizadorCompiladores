@@ -45,4 +45,15 @@ class BloqueDesicion (var expresionLogica: ExpresionLogica, var bloqueSentencia:
             }
         }
     }
+
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        for (s in bloqueSentencia){
+            s.analizarSemantica(tablaSimbolos,erroresSemanticos,ambito)
+        }
+        if(bloqueSentencia2!=null){
+            for (s in bloqueSentencia2!!){
+                s.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+            }
+        }
+    }
 }

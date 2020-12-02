@@ -1,5 +1,7 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
 import co.edu.uniquindio.compiladores.proyecto.lexico.Token
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
 class Impresion(var listaCadena:ArrayList<Token>): Sentencia(null)
@@ -17,4 +19,6 @@ class Impresion(var listaCadena:ArrayList<Token>): Sentencia(null)
         }
         return raiz
     }
+
+
 }

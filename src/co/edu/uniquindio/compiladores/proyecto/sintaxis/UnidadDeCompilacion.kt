@@ -7,19 +7,19 @@ import javafx.scene.control.TreeItem
 class UnidadDeCompilacion (var listaFunciones: ArrayList<Funcion>, var listaVariablesGlobales: ArrayList<VariableGlobal>) {
 
 
-    fun getArbolVisual():TreeItem<String>{
+    fun getArbolVisual(): TreeItem<String> {
 
-        var raiz= TreeItem<String>("Unidad de Compilación")
+        var raiz = TreeItem<String>("Unidad de Compilación")
 
-        for (f in listaFunciones){
+        for (f in listaFunciones) {
             raiz.children.add(f.getArbolVisual())
 
         }
-        for (f1 in listaVariablesGlobales){
+        for (f1 in listaVariablesGlobales) {
             raiz.children.add(f1.getArbolVisual())
         }
 
-            return raiz
+        return raiz
     }
 
     override fun toString(): String {
@@ -28,18 +28,23 @@ class UnidadDeCompilacion (var listaFunciones: ArrayList<Funcion>, var listaVari
 
     fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>) {
 
-        for(f in listaFunciones){
+        for (f in listaFunciones) {
             f.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, "Unidad de Compilación")
         }
 
-        for(f in listaVariablesGlobales){
+        for (f in listaVariablesGlobales) {
             f.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos)
         }
     }
 
     fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>) {
-        /**implementar esta fase en un futuro
-         *
-         */
+        for (f in listaFunciones) {
+            f.analizarSemantica(tablaSimbolos, erroresSemanticos)
+        }
+
+         for(f in listaVariablesGlobales){
+            f.analizarSemantica(tablaSimbolos, erroresSemanticos)
+        }
     }
+
 }

@@ -17,4 +17,6 @@ class Asignacion (var identificador: Token, var dato: Dato): Sentencia(null) {
         raiz.children.add(dato.getArbolVisual())
         return raiz
     }
+
+
 }

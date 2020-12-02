@@ -19,4 +19,8 @@ class VariableGlobal(var variableGlobal:DeclararVariable) {
     fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>) {
 
     }
+
+    fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>){
+
+    }
 }

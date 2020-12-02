@@ -20,4 +20,5 @@ class ExpresionAritmetica (var dato1: Dato?, var operadorAritmetico: Token, var 
 
         return raiz
     }
+
 }

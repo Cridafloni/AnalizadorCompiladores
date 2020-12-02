@@ -1,5 +1,7 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
 class Retorno(var dato:Dato):Sentencia(null) {
@@ -14,4 +16,6 @@ class Retorno(var dato:Dato):Sentencia(null) {
 
         return raiz
     }
+
+
 }

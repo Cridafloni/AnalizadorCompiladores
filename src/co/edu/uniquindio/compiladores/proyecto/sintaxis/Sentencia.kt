@@ -25,4 +25,8 @@ open class Sentencia (var sentencia: Sentencia?) {
 
     }
 
+    open fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito:String ){
+
+    }
+
 }

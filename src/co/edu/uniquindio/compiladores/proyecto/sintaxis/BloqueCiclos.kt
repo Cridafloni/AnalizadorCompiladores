@@ -33,4 +33,10 @@ class BloqueCiclos (var expresionLogica: ExpresionLogica, var bloqueSentencia: A
             s.llenarTablaSimbolos(tablaSimbolos,erroresSemanticos, ambito)
         }
     }
+
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        for (s in bloqueSentencia){
+            s.analizarSemantica(tablaSimbolos,erroresSemanticos, ambito)
+        }
+    }
 }
