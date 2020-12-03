@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="667.0" prefWidth="1090.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.compiladores.proyecto.controladores.InicioController">
+   <children>
+      <Button fx:id="botonAnalizar" layoutX="36.0" layoutY="14.0" mnemonicParsing="false" onAction="#analizarCodigo" prefHeight="32.0" prefWidth="100.0" text="Analizar Codigo" />
+      <TextArea fx:id="codigo" layoutX="14.0" layoutY="54.0" prefHeight="184.0" prefWidth="577.0" />
+      <TableView fx:id="tablaTokens" layoutX="14.0" layoutY="245.0" prefHeight="200.0" prefWidth="577.0">
+        <columns>
+          <TableColumn fx:id="columnaLexema" prefWidth="245.0" text="Lexema" />
+          <TableColumn fx:id="columnaCategoria" prefWidth="188.0" text="Categoria" />
+            <TableColumn fx:id="columnaFila" prefWidth="66.0" text="Fila" />
+            <TableColumn fx:id="columnaColumna" prefWidth="77.0" text="Columa" />
+        </columns>
+      </TableView>
+      <TreeView fx:id="arbolVisual" layoutX="608.0" layoutY="54.0" prefHeight="599.0" prefWidth="466.0" />
+      <TextArea fx:id="errores" layoutX="14.0" layoutY="489.0" prefHeight="164.0" prefWidth="577.0" />
+      <Label layoutX="15.0" layoutY="464.0" prefHeight="17.0" prefWidth="76.0" text="Errores:" />
+   </children>
+</AnchorPane>

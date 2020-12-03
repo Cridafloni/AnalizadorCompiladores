@@ -1,7 +1,9 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
 import co.edu.uniquindio.compiladores.proyecto.lexico.Categoria
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
 import co.edu.uniquindio.compiladores.proyecto.lexico.Token
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
 class Dato (var dato: Any) {

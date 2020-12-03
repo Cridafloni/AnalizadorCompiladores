@@ -45,7 +45,11 @@ class Funcion(var nombreFuncion:Token, var tipoRetorno:Token?, var listaParametr
         return lista
     }
     fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
-        tablaSimbolos.guardarSimbloFuncion(nombreFuncion.lexema, tipoRetorno!!.lexema, obtenerTiposParametros(),ambito, nombreFuncion.fila, nombreFuncion.columna  )
+        var retorno:String = "void"
+        if(tipoRetorno!=null){
+            retorno =  tipoRetorno!!.lexema
+        }
+        tablaSimbolos.guardarSimbloFuncion(nombreFuncion.lexema, retorno, obtenerTiposParametros(), ambito, nombreFuncion.fila, nombreFuncion.columna  )
 
         for(p in listaParametros){
             tablaSimbolos.guardarSimbloValor(p.nombre.lexema,p.tipoDato.lexema ,true, nombreFuncion.lexema, p.nombre.fila, p.nombre.columna)

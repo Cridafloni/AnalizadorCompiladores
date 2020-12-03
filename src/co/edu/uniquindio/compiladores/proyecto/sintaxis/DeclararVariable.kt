@@ -7,6 +7,7 @@ import javafx.scene.control.TreeItem
 
 class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variable: Token?, var asignacion: Asignacion?, var declararArreglo: DeclararArreglo?,
                         var declararMatriz: DeclararMatriz?) : Sentencia(null){
+
     override fun toString(): String {
         var cons = "constante=$constante, "
         if(constante==null){
@@ -50,6 +51,30 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
     }
 
     override fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        var modificable:Boolean = false
+        if(constante!=null){
+            modificable = true
+        }
+        if (declararArreglo != null) {
+            if(declararArreglo!!.asignacion == null){
+                variable = declararArreglo!!.variable
+            }else{
+               asignacion = declararArreglo!!.asignacion
+            }
+            tipoDato = declararArreglo!!.tipoDato
+        }
+        if (declararMatriz != null) {
+            if(declararMatriz!!.asignacion == null){
+                variable = declararMatriz!!.variable
+            }else{
+                asignacion = declararMatriz!!.asignacion
+            }
+            tipoDato = declararMatriz!!.tipoDato
+        }
+        if(asignacion!=null){
+            variable = asignacion!!.identificador
+        }
+        tablaSimbolos.guardarSimbloValor(variable!!.lexema, tipoDato!!.lexema, modificable, ambito, variable!!.fila, variable!!.columna)
         /**
          * Seria hacer lo de el arbol visual y llamando los diferentes declarar
          */

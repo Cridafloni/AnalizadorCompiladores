@@ -9,7 +9,6 @@ import javafx.scene.control.TreeItem
 open class Sentencia (var sentencia: Sentencia?) {
 
    open fun getArbolVisual(): TreeItem<String> {
-        //println("Estuve aqui :3 ")
         var raiz= TreeItem("Sentencia")
         raiz.children.add(sentencia!!.getArbolVisual())
         //println(sentencia)
@@ -22,7 +21,15 @@ open class Sentencia (var sentencia: Sentencia?) {
     }
 
     open fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
-
+        if(sentencia is DeclararVariable){
+            (sentencia as DeclararVariable).llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, ambito)
+        }
+        if(sentencia is BloqueCiclos){
+            (sentencia as BloqueCiclos).llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, ambito)
+        }
+        if(sentencia is BloqueDesicion){
+            (sentencia as BloqueDesicion).llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, ambito)
+        }
     }
 
     open fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito:String ){
