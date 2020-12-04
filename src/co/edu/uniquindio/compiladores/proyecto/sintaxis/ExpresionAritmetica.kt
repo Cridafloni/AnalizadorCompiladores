@@ -29,16 +29,16 @@ class ExpresionAritmetica (var dato1: Dato, var operadorAritmetico: Token, var d
         if(dato1 != null && dato2 != null){
             var tipoD1 = dato1!!.obtenerTipo(tablaSimbolos, ambito)
             var tipoD2 = dato2!!.obtenerTipo(tablaSimbolos, ambito)
-                if(tipoD1 == ""+Categoria.DECIMAL || tipoD2 == ""+Categoria.DECIMAL){
-                    return ""+Categoria.DECIMAL
+                if(tipoD1 == "REL" || tipoD2 == "REL"){
+                    return "REL"
                 }else{
-                    return ""+Categoria.ENTERO
+                    return "ENT"
                 }
             }
         return "DESCONOCIDO"
     }
 
-    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String, fila: Int, columna: Int) {
         var tipoD1 = dato1!!.obtenerTipo(tablaSimbolos, ambito)
         var tipoD2 = dato2!!.obtenerTipo(tablaSimbolos, ambito)
         if(tipoD1 ==  ""+Categoria.CADENA_CARACTER || tipoD1 == ""+Categoria.LOGICO){

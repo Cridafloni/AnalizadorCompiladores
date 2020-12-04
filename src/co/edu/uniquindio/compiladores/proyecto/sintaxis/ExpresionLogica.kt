@@ -31,9 +31,9 @@ class ExpresionLogica(var operadorNegacion:Token?,var expresionRelacional: Expre
         return "LOGI"
     }
 
-    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String, fila: Int, columna: Int) {
         if(expresionRelacional != null){
-            expresionRelacional.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+            expresionRelacional.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
         }
     }
 }

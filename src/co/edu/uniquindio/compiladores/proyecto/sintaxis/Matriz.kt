@@ -1,5 +1,6 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
 import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
@@ -25,5 +26,15 @@ class Matriz (var arreglo1: Arreglo, var arreglo2: Arreglo):Dato(null) {
 
     override fun obtenerTipo(tablaSimbolos: TablaSimbolos, ambito: String): String {
         return arreglo1.obtenerTipo(tablaSimbolos, ambito)
+    }
+
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String, fila: Int, columna: Int) {
+        arreglo1.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
+        arreglo2.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
+        var tipoA1 = arreglo1.obtenerTipo(tablaSimbolos, ambito)
+        var tipoA2 = arreglo2.obtenerTipo(tablaSimbolos, ambito)
+        if(tipoA1 != tipoA2){
+            erroresSemanticos.add(Error("Una matriz solo puede contener un tipo de dato", fila, columna))
+        }
     }
 }

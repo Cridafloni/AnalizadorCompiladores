@@ -4,7 +4,7 @@ import co.edu.uniquindio.compiladores.proyecto.lexico.Error
 import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
-class BloqueDesicion (var expresionLogica: ExpresionLogica, var bloqueSentencia: ArrayList<Sentencia>, var bloqueSentencia2: ArrayList<Sentencia>?): Sentencia(null) {
+class BloqueDesicion (var expresionLogica: ExpresionLogica?, var bloqueSentencia: ArrayList<Sentencia>, var bloqueSentencia2: ArrayList<Sentencia>?, var datoLogico: Dato?): Sentencia(null) {
 
     override fun toString(): String {
         return "BloqueDesicion(expresionLogica=$expresionLogica, bloqueSentencia=$bloqueSentencia, bloqueSentencia2=$bloqueSentencia2)"
@@ -13,7 +13,12 @@ class BloqueDesicion (var expresionLogica: ExpresionLogica, var bloqueSentencia:
         var raiz= TreeItem("Decision")
 
         var condicion =  TreeItem("Condicion")
-        condicion.children.add(expresionLogica.getArbolVisual())
+        if(expresionLogica!=null){
+            condicion.children.add(expresionLogica!!.getArbolVisual())
+        }
+        if(datoLogico!=null){
+            condicion.children.add(datoLogico!!.getArbolVisual())
+        }
 
         raiz.children.add(condicion)
 
@@ -47,6 +52,20 @@ class BloqueDesicion (var expresionLogica: ExpresionLogica, var bloqueSentencia:
     }
 
     override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        if(expresionLogica != null){
+            var fila = expresionLogica!!.expresionRelacional.operadorRelacional.fila
+            var columna = expresionLogica!!.expresionRelacional.operadorRelacional.columna
+            expresionLogica!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
+        }
+        if(datoLogico != null){
+            var fila: Int = 0
+            var columna: Int = 0
+            var tipo = datoLogico!!.obtenerTipo(tablaSimbolos, ambito)
+            if(tipo != "LOGI"){
+                erroresSemanticos.add(Error("El dato solo puede ser de tipo lógico (LOGI)", 0, 0))
+            }
+            datoLogico!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
+        }
         for (s in bloqueSentencia){
             s.analizarSemantica(tablaSimbolos,erroresSemanticos,ambito)
         }

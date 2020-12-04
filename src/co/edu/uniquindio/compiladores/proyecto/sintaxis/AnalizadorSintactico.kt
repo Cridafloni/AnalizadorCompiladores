@@ -249,8 +249,19 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             obtenerSiguienteToken()
             if (tokenActual.categoria==Categoria.AGRUPADOR){
                 obtenerSiguienteToken()
-                var expresionLogica= esExpresionLogica()
-                if(expresionLogica!=null){
+                var posicionInicial = posicionActual
+                var esValorLogico:Boolean = true
+                var expresionLogica = esExpresionLogica()
+                var datoLogico:Dato? = null
+                if(expresionLogica== null){
+                    esValorLogico = false
+                    hacerBT(posicionInicial)
+                    datoLogico = esDato(false, false)
+                    if(datoLogico != null){
+                        esValorLogico = true
+                    }
+                }
+                if(esValorLogico){
                     if(tokenActual.categoria == Categoria.AGRUPADOR){
                         obtenerSiguienteToken()
                         var bloqueSentencia = esBloqueSentencias()
@@ -259,7 +270,7 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                             if(tokenActual.categoria == Categoria.APERTURA_BLOQUE_SENTENCIA){
                                 bloqueSentencia1 = esBloqueSentencias()
                             }
-                            return BloqueDesicion(expresionLogica, bloqueSentencia, bloqueSentencia1)
+                            return BloqueDesicion(expresionLogica, bloqueSentencia, bloqueSentencia1, datoLogico)
                         }else{
                             reportarError("El bloque de sentencias está vacío")
                         }
@@ -283,19 +294,30 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 obtenerSiguienteToken()
                 if(tokenActual.categoria == Categoria.AGRUPADOR){
                     obtenerSiguienteToken()
+                    var posicionInicial = posicionActual
+                    var esValorLogico:Boolean = true
                     var expresionLogica = esExpresionLogica()
-                    if(expresionLogica != null){
+                    var datoLogico:Dato? = null
+                    if(expresionLogica== null){
+                        esValorLogico = false
+                        hacerBT(posicionInicial)
+                        datoLogico = esDato(false, false)
+                        if(datoLogico != null){
+                            esValorLogico = true
+                        }
+                    }
+                    if(esValorLogico){
                         if(tokenActual.categoria == Categoria.AGRUPADOR){
                             obtenerSiguienteToken()
                             var bloqueSentencias = esBloqueSentencias()
                             if(bloqueSentencias != null){
-                                return BloqueCiclos(expresionLogica, bloqueSentencias)
+                                return BloqueCiclos(expresionLogica, bloqueSentencias, datoLogico)
                             }
                         }else {
                             reportarError("Falta cierre de agrupador")
                         }
                     }else{
-                        reportarError("Expresión lógica inválida")
+                        reportarError("Valor lógico inválido")
                     }
                 }else {
                     reportarError("Falta apertura de agrupador")
@@ -309,11 +331,22 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                         obtenerSiguienteToken()
                         if(tokenActual.categoria == Categoria.AGRUPADOR) {
                             obtenerSiguienteToken()
+                            var posicionInicial = posicionActual
+                            var esValorLogico:Boolean = true
                             var expresionLogica = esExpresionLogica()
-                            if (expresionLogica != null) {
+                            var datoLogico:Dato? = null
+                            if(expresionLogica== null){
+                                esValorLogico = false
+                                hacerBT(posicionInicial)
+                                datoLogico = esDato(false, false)
+                                if(datoLogico != null){
+                                    esValorLogico = true
+                                }
+                            }
+                            if(esValorLogico){
                                 if (tokenActual.categoria == Categoria.AGRUPADOR) {
                                     obtenerSiguienteToken()
-                                    return BloqueCiclos(expresionLogica, bloqueSentencias)
+                                    return BloqueCiclos(expresionLogica, bloqueSentencias, datoLogico)
                                 }else {
                                     reportarError("Falta cierre de agrupador")
                                 }
@@ -348,6 +381,8 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
             }else{
                 return ExpresionLogica(operadorNegacion,relacional,null,null)
             }
+        }else{
+
         }
         return null
     }

@@ -22,13 +22,19 @@ class Asignacion (var identificador: Token, var dato: Dato): Sentencia(null) {
     }
 
     override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
-       dato.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+       dato.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, identificador.fila, identificador.columna)
         var simbolo = tablaSimbolos.buscarSimboloValor(identificador.lexema, ambito)
         if(simbolo != null){
             var tipoDato = dato.obtenerTipo(tablaSimbolos, ambito)
-            if(tipoDato != simbolo.tipo){
-                erroresSemanticos.add(Error("Los tipos de datos no coinciden", identificador.fila, identificador.columna))
+            if(tipoDato != "DESCONOCIDO"){
+                if(tipoDato != simbolo.tipo){
+                    erroresSemanticos.add(Error("Los tipos de datos no coinciden", identificador.fila, identificador.columna))
+                }
+            }else{
+                erroresSemanticos.add(Error("El dato no posee un valor registrado", identificador.fila, identificador.columna))
             }
+        }else{
+            erroresSemanticos.add(Error("La variable invocada no existe", identificador.fila, identificador.columna))
         }
     }
 }

@@ -73,10 +73,10 @@ open class Dato (var dato: Any?) {
                 return  (dato as ExpresionLogica).obtenerTipo()
             }
             if (dato is Arreglo){
-                return  (dato as Arreglo).obtenerTipo(tablaSimbolos, ambito)
+                return  "ARREGLO"+(dato as Arreglo).obtenerTipo(tablaSimbolos, ambito)
             }
             if(dato is Matriz){
-                return  (dato as Matriz).obtenerTipo(tablaSimbolos, ambito)
+                return  "MATRIZ"+(dato as Matriz).obtenerTipo(tablaSimbolos, ambito)
             }
             if(dato is FuncionInvocada){
                 return  (dato as FuncionInvocada).obtenerRetorno(tablaSimbolos, ambito)
@@ -92,18 +92,26 @@ open class Dato (var dato: Any?) {
         }
         return "DESCONOCIDO"
     }
-    open fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito:String ){
+    open fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito:String, fila: Int, columna:Int ){
+        if (dato is Token){
+            if((dato as Token).categoria == Categoria.IDENTIFICADOR){
+                var variable = tablaSimbolos.buscarSimboloValor((dato as Token).lexema, ambito)
+                if(variable == null){
+                    erroresSemanticos.add(Error("La variable invocada no existe.", (dato as Token).fila, (dato as Token).columna ))
+                }
+            }
+        }
         if(dato is  ExpresionAritmetica){
-            (dato as ExpresionAritmetica).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+            (dato as ExpresionAritmetica).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
         }
         if(dato is  ExpresionLogica){
-           (dato as ExpresionLogica).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+           (dato as ExpresionLogica).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
         }
         if (dato is Arreglo){
-            (dato as Arreglo).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+            (dato as Arreglo).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
         }
         if(dato is Matriz){
-            (dato as Matriz).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+            (dato as Matriz).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
         }
         if(dato is FuncionInvocada){
             (dato as FuncionInvocada).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)

@@ -52,6 +52,7 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
 
     override fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
         var modificable:Boolean = false
+        var tipo: String = tipoDato!!.lexema
         if(constante!=null){
             modificable = true
         }
@@ -61,7 +62,7 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
             }else{
                asignacion = declararArreglo!!.asignacion
             }
-            tipoDato = declararArreglo!!.tipoDato
+            tipo = "ARREGLO"+declararArreglo!!.tipoDato
         }
         if (declararMatriz != null) {
             if(declararMatriz!!.asignacion == null){
@@ -69,12 +70,12 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
             }else{
                 asignacion = declararMatriz!!.asignacion
             }
-            tipoDato = declararMatriz!!.tipoDato
+            tipo = "MATRIZ"+declararMatriz!!.tipoDato
         }
         if(asignacion!=null){
             variable = asignacion!!.identificador
         }
-        tablaSimbolos.guardarSimbloValor(variable!!.lexema, tipoDato!!.lexema, modificable, ambito, variable!!.fila, variable!!.columna)
+        tablaSimbolos.guardarSimbloValor(variable!!.lexema, tipo, modificable, ambito, variable!!.fila, variable!!.columna)
         /**
          * Seria hacer lo de el arbol visual y llamando los diferentes declarar
          */

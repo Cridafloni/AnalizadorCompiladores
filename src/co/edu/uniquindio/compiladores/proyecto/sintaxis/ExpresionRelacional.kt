@@ -23,8 +23,22 @@ class ExpresionRelacional (var componente1: Dato, var operadorRelacional: Token,
 
     }
 
-    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
-        componente1.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
-        componente2.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String, fila: Int, columna: Int) {
+        componente1.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
+        componente2.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
+        var tipo1 = componente1.obtenerTipo(tablaSimbolos, ambito)
+        var tipo2 = componente2.obtenerTipo(tablaSimbolos, ambito)
+        if(operadorRelacional.lexema !=":~:~" && operadorRelacional.lexema !="¬:~"){
+            if(tipo1 != "ENT" && tipo1 != "REL"){
+                erroresSemanticos.add(Error("El operador relacional ${operadorRelacional.lexema} no puede utilizarse con datos de tipo $tipo1 solo puede ser usado con valores numéricos.", fila,  columna))
+            }
+            if(tipo2 != "ENT" && tipo2 != "REL"){
+                erroresSemanticos.add(Error("El operador relacional ${operadorRelacional.lexema} no puede utilizarse con datos de tipo $tipo2 solo puede ser usado con valores numéricos.", fila,  columna))
+            }
+        }else{
+            if(tipo1 != tipo2){
+                erroresSemanticos.add(Error("No se puede comparar un dato de tipo $tipo1 con uno de tipo $tipo2", fila,  columna))
+            }
+        }
     }
 }
