@@ -59,7 +59,12 @@ class InicioController : Initializable {
                             semantico.llenarTablaSimbolos()
                             println(semantico.tablaSimbolos)
                             semantico.analizarSemantica()
-                            println(semantico.erroresSemanticos)
+                            var errores2 = semantico.erroresSemanticos
+                            for(f in errores2){
+                                reporte+= f.toString()
+                                reporte+= "\n"
+                            }
+                            errores.setText(reporte)
                         }
 
                     }else{
