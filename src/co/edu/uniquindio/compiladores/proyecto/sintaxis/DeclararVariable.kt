@@ -79,4 +79,27 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
          * Seria hacer lo de el arbol visual y llamando los diferentes declarar
          */
     }
+
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        if (declararArreglo != null) {
+            declararArreglo!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+        }
+        if (declararMatriz != null) {
+            if(declararMatriz!!.asignacion == null){
+                variable = declararMatriz!!.variable
+            }else{
+                asignacion = declararMatriz!!.asignacion
+            }
+            tipoDato = declararMatriz!!.tipoDato
+        }
+        if(asignacion!=null){
+            asignacion!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+            if(tipoDato!=null){
+                var tipoAsignacion = asignacion!!.obtenerTipoAsignacion(tablaSimbolos, ambito)
+                if(""+tipoDato!!.lexema != tipoAsignacion){
+                    erroresSemanticos.add(Error("El tipo de dato de asignación no coincide con el tipo de dato del identificador", tipoDato!!.fila, tipoDato!!.columna))
+                }
+            }
+        }
+    }
 }

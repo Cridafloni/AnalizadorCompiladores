@@ -1,9 +1,11 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
 import co.edu.uniquindio.compiladores.proyecto.lexico.Token
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
-class DeclararArreglo (var tipoDato: Token,var tamanio:Token , var variable: Token?, var asignacion: Asignacion?) {
+class DeclararArreglo (var tipoDato: Token,var tamanio:Token , var variable: Token?, var asignacion: Asignacion?):Sentencia(null) {
     override fun toString(): String {
         if(variable==null){
             return "DeclararArreglo(tipoDato=$tipoDato, tamanio=$tamanio, variable=$variable, asignacion=$asignacion)"
@@ -11,7 +13,7 @@ class DeclararArreglo (var tipoDato: Token,var tamanio:Token , var variable: Tok
         return "DeclararArreglo(tipoDato=$tipoDato, tamanio=$tamanio, asignacion=$asignacion)"
     }
 
-    fun getArbolVisual(): TreeItem<String> {
+    override fun getArbolVisual(): TreeItem<String> {
 
         var raiz= TreeItem<String>("Declaración Arreglo")
 
@@ -28,5 +30,9 @@ class DeclararArreglo (var tipoDato: Token,var tamanio:Token , var variable: Tok
         return raiz
     }
 
-
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        if(asignacion != null){
+            asignacion!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+        }
+    }
 }

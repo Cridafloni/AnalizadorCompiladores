@@ -54,10 +54,8 @@ class TablaSimbolos (var listaErrores: ArrayList<Error>){
      *Permite buscar una funcion dentro de la tabla de simbolos
      */
     fun buscarSimboloFuncion(nombre:String, tiposParametros:ArrayList<String>): Simbolo? {
-
         for (s in listaSimbolos) {
             if(tiposParametros!=null) {
-
                 if (s.nombre == nombre && s.tiposParametros == tiposParametros) {
                     return s
                 }

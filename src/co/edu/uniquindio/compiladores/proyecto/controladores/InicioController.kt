@@ -57,7 +57,8 @@ class InicioController : Initializable {
 
                             val semantico = AnalizadorSemantico(uc!!)
                             semantico.llenarTablaSimbolos()
-                            print(semantico.tablaSimbolos)
+                            println(semantico.tablaSimbolos)
+                            semantico.analizarSemantica()
                             println(semantico.erroresSemanticos)
                         }
 

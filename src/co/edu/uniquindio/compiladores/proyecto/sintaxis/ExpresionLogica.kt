@@ -1,14 +1,16 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.lexico.Error
 import co.edu.uniquindio.compiladores.proyecto.lexico.Token
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
-class ExpresionLogica(var operadorNegacion:Token?,var expresionRelacional: ExpresionRelacional, var expresionLogica: ExpresionLogica?, var operadorLogico:Token?){
+class ExpresionLogica(var operadorNegacion:Token?,var expresionRelacional: ExpresionRelacional, var expresionLogica: ExpresionLogica?, var operadorLogico:Token?): Dato(null){
     override fun toString(): String {
         return "ExpresionLogica(operadorNegacion=$operadorNegacion, expresionRelacional=$expresionRelacional, expresionLogica=$expresionLogica, operadorLogico=$operadorLogico)"
     }
 
-    fun getArbolVisual(): TreeItem<String> {
+    override fun getArbolVisual(): TreeItem<String> {
         var raiz= TreeItem("Expresion Logica")
 
         if(operadorNegacion!=null){
@@ -25,6 +27,13 @@ class ExpresionLogica(var operadorNegacion:Token?,var expresionRelacional: Expre
         }
         return raiz
     }
+     fun obtenerTipo(): String {
+        return "LOGI"
+    }
 
-
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        if(expresionRelacional != null){
+            expresionRelacional.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+        }
+    }
 }

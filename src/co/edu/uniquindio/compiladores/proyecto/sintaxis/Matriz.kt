@@ -1,13 +1,14 @@
 package co.edu.uniquindio.compiladores.proyecto.sintaxis
 
+import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
-class Matriz (var arreglo1: Arreglo, var arreglo2: Arreglo) {
+class Matriz (var arreglo1: Arreglo, var arreglo2: Arreglo):Dato(null) {
     override fun toString(): String {
         return "Matriz(arreglo1=$arreglo1, arreglo2=$arreglo2)"
     }
 
-    fun getArbolVisual(): TreeItem<String> {
+    override fun getArbolVisual(): TreeItem<String> {
 
         var raiz= TreeItem<String>("Matriz")
 
@@ -22,4 +23,7 @@ class Matriz (var arreglo1: Arreglo, var arreglo2: Arreglo) {
         return raiz
     }
 
+    override fun obtenerTipo(tablaSimbolos: TablaSimbolos, ambito: String): String {
+        return arreglo1.obtenerTipo(tablaSimbolos, ambito)
+    }
 }

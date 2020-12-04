@@ -6,12 +6,12 @@ import co.edu.uniquindio.compiladores.proyecto.lexico.Token
 import co.edu.uniquindio.compiladores.proyecto.semantica.TablaSimbolos
 import javafx.scene.control.TreeItem
 
-class Dato (var dato: Any) {
+open class Dato (var dato: Any?) {
     override fun toString(): String {
         return "Dato(dato=$dato)"
     }
 
-    fun getArbolVisual(): TreeItem<String>? {
+    open fun getArbolVisual(): TreeItem<String>? {
         if (dato is Token){
             return  TreeItem("Dato: ${(dato as Token).lexema}")
         }
@@ -44,5 +44,74 @@ class Dato (var dato: Any) {
             }
 
         }
+    }
+    open fun obtenerTipo(tablaSimbolos: TablaSimbolos, ambito: String):String{
+        if (dato is Token){
+            if((dato as Token).categoria == Categoria.IDENTIFICADOR){
+                var variable = tablaSimbolos.buscarSimboloValor((dato as Token).lexema, ambito)
+                if(variable != null){
+                    return variable.tipo
+                }
+            }
+            if((dato as Token).categoria == Categoria.ENTERO){
+                return "ENT"
+            }
+            if((dato as Token).categoria==Categoria.CADENA_CARACTER) {
+                return "PAL"
+            }
+            if((dato as Token).categoria==Categoria.DECIMAL) {
+                return "REL"
+            }
+            if((dato as Token).categoria==Categoria.LOGICO) {
+                return "LOGI"
+            }
+        } else{
+            if(dato is  ExpresionAritmetica){
+                return  ""+(dato as ExpresionAritmetica).obtenerTipo(tablaSimbolos, ambito)
+            }
+            if(dato is  ExpresionLogica){
+                return  (dato as ExpresionLogica).obtenerTipo()
+            }
+            if (dato is Arreglo){
+                return  (dato as Arreglo).obtenerTipo(tablaSimbolos, ambito)
+            }
+            if(dato is Matriz){
+                return  (dato as Matriz).obtenerTipo(tablaSimbolos, ambito)
+            }
+            if(dato is FuncionInvocada){
+                return  (dato as FuncionInvocada).obtenerRetorno(tablaSimbolos, ambito)
+
+            }else{
+                var arreglo = dato  as ArrayList<Token>
+
+                if(arreglo.isNotEmpty()){
+                    return ""+Categoria.CADENA_CARACTER
+                }
+            }
+
+        }
+        return "DESCONOCIDO"
+    }
+    open fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito:String ){
+        if(dato is  ExpresionAritmetica){
+            (dato as ExpresionAritmetica).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+        }
+        if(dato is  ExpresionLogica){
+           (dato as ExpresionLogica).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+        }
+        if (dato is Arreglo){
+            (dato as Arreglo).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+        }
+        if(dato is Matriz){
+            (dato as Matriz).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+        }
+        if(dato is FuncionInvocada){
+            (dato as FuncionInvocada).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+            var retorno = (dato as FuncionInvocada).obtenerRetorno(tablaSimbolos, ambito)
+            if(retorno == "VOID"){
+                erroresSemanticos.add(Error("La función invocada no tiene un retorno.", (dato as FuncionInvocada).nombreFuncion.fila, (dato as FuncionInvocada).nombreFuncion.columna))
+            }
+        }
+
     }
 }

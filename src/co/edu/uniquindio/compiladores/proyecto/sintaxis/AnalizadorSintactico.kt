@@ -382,7 +382,11 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
                 var operadorAritmetico = tokenActual
                 obtenerSiguienteToken()
                 var dato2 = esDato(true, false)
-                return ExpresionAritmetica(dato1,operadorAritmetico ,dato2)
+                if(dato2 != null){
+                    return ExpresionAritmetica(dato1,operadorAritmetico ,dato2)
+                }else{
+                    reportarError("El segundo parámetro de una expresión aritmética no puede ser null.")
+                }
             }
         }
         return null

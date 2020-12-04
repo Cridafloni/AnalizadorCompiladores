@@ -17,6 +17,18 @@ class Asignacion (var identificador: Token, var dato: Dato): Sentencia(null) {
         raiz.children.add(dato.getArbolVisual())
         return raiz
     }
+    fun obtenerTipoAsignacion(tablaSimbolos: TablaSimbolos, ambito: String): String{
+        return dato.obtenerTipo(tablaSimbolos, ambito)
+    }
 
-
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+       dato.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+        var simbolo = tablaSimbolos.buscarSimboloValor(identificador.lexema, ambito)
+        if(simbolo != null){
+            var tipoDato = dato.obtenerTipo(tablaSimbolos, ambito)
+            if(tipoDato != simbolo.tipo){
+                erroresSemanticos.add(Error("Los tipos de datos no coinciden", identificador.fila, identificador.columna))
+            }
+        }
+    }
 }
