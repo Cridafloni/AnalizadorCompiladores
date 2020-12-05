@@ -34,15 +34,20 @@ class DeclararMatriz  (var tipoDato: Token, var filas: Token, var columnas: Toke
         if(asignacion != null){
             asignacion!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
             var tipoMatriz = asignacion!!.obtenerTipoAsignacion(tablaSimbolos, ambito)
+            println(tipoMatriz)
             if("MATRIZ"+tipoDato.lexema != tipoMatriz){
                 erroresSemanticos.add(Error("El tipo de dato de la matriz no coincide con el declarado.", tipoDato.fila, tipoDato.columna))
             }
-            var arreglo1 = (asignacion!!.dato as Matriz).arreglo1.listaDatos
-            var arreglo2 = (asignacion!!.dato as Matriz).arreglo2.listaDatos
-            if((filas.lexema as Int) != arreglo1.size){
+
+            var arreglo1 = (asignacion!!.dato.dato as Matriz).arreglo1.listaDatos
+            var arreglo2 = (asignacion!!.dato.dato as Matriz).arreglo2.listaDatos
+
+            var f =filas.lexema.subSequence(1, filas.lexema.length)
+            var c = columnas.lexema.subSequence(1, columnas.lexema.length)
+            if(f != ""+arreglo1.size){
                 erroresSemanticos.add(Error("El tamaño de las filas debe de ser ${filas.lexema}.", tipoDato.fila, tipoDato.columna))
             }
-            if((columnas.lexema as Int) != arreglo2.size){
+            if(c != ""+arreglo2.size){
                 erroresSemanticos.add(Error("El tamaño de las columnas debe de ser ${columnas.lexema}.", tipoDato.fila, tipoDato.columna))
             }
         }

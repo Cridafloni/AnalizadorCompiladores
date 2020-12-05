@@ -37,10 +37,13 @@ class DeclararArreglo (var tipoDato: Token,var tamanio:Token , var variable: Tok
             if("ARREGLO"+tipoDato.lexema != tipoArreglo){
                 erroresSemanticos.add(Error("El tipo de dato del arreglo no coincide con el declarado.", tipoDato.fila, tipoDato.columna))
             }
-            var arreglo = (asignacion!!.dato as Arreglo).listaDatos
-            if((tamanio.lexema as Int) != arreglo.size){
+
+            var arreglo = (asignacion!!.dato.dato as Arreglo).listaDatos
+            var tam = tamanio.lexema.subSequence(1, tamanio.lexema.length)
+            if(tam != ""+arreglo.size){
                 erroresSemanticos.add(Error("El tamaño del arreglo debe de ser ${tamanio.lexema}.", tipoDato.fila, tipoDato.columna))
             }
+
         }
     }
 }

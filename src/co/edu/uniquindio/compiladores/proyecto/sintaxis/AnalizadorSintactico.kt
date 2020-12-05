@@ -507,10 +507,17 @@ class AnalizadorSintactico (var listaTokens:ArrayList<Token>){
      */
     fun esDato(expresionAritmetica: Boolean, expresionLogica: Boolean):Dato?{
         var posicionInicial = posicionActual
+
+        var matriz = esMatriz()
+        if(matriz !=null){
+            return  Dato(matriz)
+        }
+        hacerBT(posicionInicial)
         var arreglo = esArreglo()
         if(arreglo !=null){
             return  Dato(arreglo)
         }
+
         hacerBT(posicionInicial)
         if (tokenActual.categoria==Categoria.CADENA_CARACTER) {
             obtenerSiguienteToken()

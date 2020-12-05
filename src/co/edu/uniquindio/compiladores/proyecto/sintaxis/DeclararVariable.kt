@@ -52,7 +52,10 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
 
     override fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
         var modificable:Boolean = false
-        var tipo: String = tipoDato!!.lexema
+        var tipo: String = ""
+        if(tipoDato != null){
+            tipo = tipoDato!!.lexema
+        }
         if(constante!=null){
             modificable = true
         }
@@ -62,7 +65,7 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
             }else{
                asignacion = declararArreglo!!.asignacion
             }
-            tipo = "ARREGLO"+declararArreglo!!.tipoDato
+            tipo = "ARREGLO"+declararArreglo!!.tipoDato.lexema
         }
         if (declararMatriz != null) {
             if(declararMatriz!!.asignacion == null){
@@ -70,7 +73,7 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
             }else{
                 asignacion = declararMatriz!!.asignacion
             }
-            tipo = "MATRIZ"+declararMatriz!!.tipoDato
+            tipo = "MATRIZ"+declararMatriz!!.tipoDato.lexema
         }
         if(asignacion!=null){
 
@@ -87,12 +90,7 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
             declararArreglo!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
         }else
         if (declararMatriz != null) {
-            if(declararMatriz!!.asignacion == null){
-                variable = declararMatriz!!.variable
-            }else{
-                asignacion = declararMatriz!!.asignacion
-            }
-            tipoDato = declararMatriz!!.tipoDato
+            declararMatriz!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
         }else if(asignacion!=null){
             asignacion!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
             if(tipoDato!=null){
