@@ -40,8 +40,7 @@ class TablaSimbolos (var listaErrores: ArrayList<Error>){
 
         for (s in listaSimbolos) {
             if(s.tiposParametros==null){
-
-                if (s.nombre == nombre && s.ambito == ambito) {
+                if ( s.nombre == nombre && (s.ambito == ambito || ambito.contains(s.ambito!!)) ) {
                 return s
                 }
             }

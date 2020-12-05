@@ -17,5 +17,7 @@ class Retorno(var dato:Dato):Sentencia(null) {
         return raiz
     }
 
-
+    override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
+        dato.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, 0,0)
+    }
 }

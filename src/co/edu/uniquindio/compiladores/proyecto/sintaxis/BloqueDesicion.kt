@@ -42,11 +42,12 @@ class BloqueDesicion (var expresionLogica: ExpresionLogica?, var bloqueSentencia
 
     override fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
         for(s in bloqueSentencia){
-            s.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, ambito)
+
+            s.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, "$ambito $this")
         }
         if(bloqueSentencia2!=null){
             for (s in bloqueSentencia2!!){
-                s.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, ambito)
+                s.llenarTablaSimbolos(tablaSimbolos, erroresSemanticos, "$ambito $this")
             }
         }
     }
@@ -55,23 +56,23 @@ class BloqueDesicion (var expresionLogica: ExpresionLogica?, var bloqueSentencia
         if(expresionLogica != null){
             var fila = expresionLogica!!.expresionRelacional.operadorRelacional.fila
             var columna = expresionLogica!!.expresionRelacional.operadorRelacional.columna
-            expresionLogica!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
+            expresionLogica!!.analizarSemantica(tablaSimbolos, erroresSemanticos, "$ambito $this", fila, columna)
         }
         if(datoLogico != null){
             var fila: Int = 0
             var columna: Int = 0
-            var tipo = datoLogico!!.obtenerTipo(tablaSimbolos, ambito)
+            var tipo = datoLogico!!.obtenerTipo(tablaSimbolos, "$ambito $this")
             if(tipo != "LOGI"){
                 erroresSemanticos.add(Error("El dato solo puede ser de tipo lógico (LOGI)", 0, 0))
             }
-            datoLogico!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito, fila, columna)
+            datoLogico!!.analizarSemantica(tablaSimbolos, erroresSemanticos, "$ambito $this", fila, columna)
         }
         for (s in bloqueSentencia){
-            s.analizarSemantica(tablaSimbolos,erroresSemanticos,ambito)
+            s.analizarSemantica(tablaSimbolos,erroresSemanticos,"$ambito $this")
         }
         if(bloqueSentencia2!=null){
             for (s in bloqueSentencia2!!){
-                s.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+                s.analizarSemantica(tablaSimbolos, erroresSemanticos, "$ambito $this")
             }
         }
     }

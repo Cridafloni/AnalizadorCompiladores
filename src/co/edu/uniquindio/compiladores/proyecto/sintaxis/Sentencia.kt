@@ -33,6 +33,10 @@ open class Sentencia (var sentencia: Sentencia?) {
     }
 
     open fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito:String ){
+
+        if(sentencia is Asignacion){
+            (sentencia as Asignacion).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
+        }
         if(sentencia is DeclararVariable){
             (sentencia as DeclararVariable).analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
         }

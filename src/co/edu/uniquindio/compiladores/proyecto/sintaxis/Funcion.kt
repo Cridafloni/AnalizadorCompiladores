@@ -45,7 +45,7 @@ class Funcion(var nombreFuncion:Token, var tipoRetorno:Token?, var listaParametr
         return lista
     }
     fun llenarTablaSimbolos(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
-        var retorno:String = "void"
+        var retorno:String = "VOID"
         if(tipoRetorno!=null){
             retorno =  tipoRetorno!!.lexema
         }
@@ -61,8 +61,33 @@ class Funcion(var nombreFuncion:Token, var tipoRetorno:Token?, var listaParametr
     }
 
     fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>){
+        var retorna = tipoRetorno!=null
+        var nSentencia: Int = 0
         for(s in listaSentencia){
+            if(retorna){
+                if(s.sentencia != null){
+                    if(s.sentencia is Retorno){
+                        var tipo = (s.sentencia as Retorno).dato.obtenerTipo(tablaSimbolos, nombreFuncion.lexema)
+                        (s.sentencia as Retorno).analizarSemantica(tablaSimbolos, erroresSemanticos, nombreFuncion.lexema)
+                        if(nSentencia != listaSentencia.size-1){
+                            erroresSemanticos.add(Error("No pueden existir sentencias después del retorno", nombreFuncion.fila, nombreFuncion.columna))
+                        }
+                        if(tipo != tipoRetorno!!.lexema){
+                            erroresSemanticos.add(Error("El valor retornado no coincide con el tipo de retorno", nombreFuncion.fila, nombreFuncion.columna))
+                        }
+                    }else{
+                        if(nSentencia == listaSentencia.size-1){
+                            erroresSemanticos.add(Error("Debe existir una sentencia de retorno para la función ${nombreFuncion.lexema}", nombreFuncion.fila, nombreFuncion.columna))
+                        }
+                    }
+                }
+            }else{
+                if(s.sentencia is Retorno){
+                    erroresSemanticos.add(Error("La función ${nombreFuncion.lexema} no tiene un tipo de retorno", nombreFuncion.fila, nombreFuncion.columna))
+                }
+            }
             s.analizarSemantica(tablaSimbolos, erroresSemanticos, nombreFuncion.lexema)
+            nSentencia++
         }
     }
 }

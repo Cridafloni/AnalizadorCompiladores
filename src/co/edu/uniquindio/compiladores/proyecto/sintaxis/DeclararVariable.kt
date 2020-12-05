@@ -73,6 +73,7 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
             tipo = "MATRIZ"+declararMatriz!!.tipoDato
         }
         if(asignacion!=null){
+
             variable = asignacion!!.identificador
         }
         tablaSimbolos.guardarSimbloValor(variable!!.lexema, tipo, modificable, ambito, variable!!.fila, variable!!.columna)
@@ -84,7 +85,7 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
     override fun analizarSemantica(tablaSimbolos: TablaSimbolos, erroresSemanticos: ArrayList<Error>, ambito: String) {
         if (declararArreglo != null) {
             declararArreglo!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
-        }
+        }else
         if (declararMatriz != null) {
             if(declararMatriz!!.asignacion == null){
                 variable = declararMatriz!!.variable
@@ -92,8 +93,7 @@ class DeclararVariable (var constante: Token?, var tipoDato: Token?, var variabl
                 asignacion = declararMatriz!!.asignacion
             }
             tipoDato = declararMatriz!!.tipoDato
-        }
-        if(asignacion!=null){
+        }else if(asignacion!=null){
             asignacion!!.analizarSemantica(tablaSimbolos, erroresSemanticos, ambito)
             if(tipoDato!=null){
                 var tipoAsignacion = asignacion!!.obtenerTipoAsignacion(tablaSimbolos, ambito)
