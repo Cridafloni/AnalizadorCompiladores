@@ -10,7 +10,7 @@ class Aplicacion : Application(){
 
     override fun start(primaryStage: Stage?) {
 
-        val loader = FXMLLoader(Aplicacion::class.java.getResource("/inicio.fxml"))
+        val loader = FXMLLoader(Aplicacion::class.java.getResource("inicio.fxml"))
         val parent:Parent = loader.load()
 
         val scene = Scene(parent)
